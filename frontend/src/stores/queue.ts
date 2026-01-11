@@ -16,7 +16,7 @@ export const useQueueStore = defineStore('queue', () => {
     offset: 0,
   })
 
-  const hasMore = computed(() => items.value.length < total.value)
+  const hasMore = computed(() => items.value?.length < total.value)
 
   async function fetchPending(append = false) {
     loading.value = true
