@@ -16,17 +16,19 @@ ENV CI=true
 # Enable pnpm
 RUN corepack enable
 
-# Copy package files first for layer caching
-COPY ui/package.json ui/pnpm-lock.yaml ./
+# Copy workspace config and lockfile for layer caching
+COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
+COPY ui/package.json ./ui/
+COPY server/package.json ./server/
 
-# Install dependencies
-RUN pnpm install --frozen-lockfile
+# Install UI dependencies using workspace filter
+RUN pnpm --filter @resonance/ui install --frozen-lockfile
 
-# Copy source files
-COPY ui/ .
+# Copy UI source files
+COPY ui/ ./ui/
 
 # Build production bundle
-RUN pnpm run build
+RUN pnpm --filter @resonance/ui run build
 
 # =============================================================================
 # Stage 2: Build Server
@@ -44,11 +46,13 @@ RUN corepack enable
 # Build tools for native modules (Sequelize SQLite)
 RUN apk add --no-cache python3 make g++ sqlite-dev
 
-# Copy package files first for layer caching
-COPY server/package.json server/pnpm-lock.yaml ./
+# Copy workspace config and lockfile for layer caching
+COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
+COPY server/package.json ./server/
+COPY ui/package.json ./ui/
 
-# Install dependencies (including devDependencies for build)
-RUN pnpm install --frozen-lockfile
+# Install server dependencies (including devDependencies for build)
+RUN pnpm --filter @resonance/server install --frozen-lockfile
 
 # Navigate into sqlite3's actual directory and build it manually
 RUN cd /build/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3 && \
@@ -57,11 +61,11 @@ RUN cd /build/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3 && \
     echo "SQLite3 build complete"
 
 # Copy server source
-COPY server/src ./src
-COPY server/tsconfig.json server/tsconfig.build.json ./
+COPY server/src ./server/src
+COPY server/tsconfig.json server/tsconfig.build.json ./server/
 
 # Build TypeScript to JavaScript
-RUN pnpm run build
+RUN pnpm --filter @resonance/server run build
 
 # =============================================================================
 # Stage 3: Production Runtime
@@ -79,11 +83,13 @@ RUN corepack enable
 # Install runtime dependencies (curl for healthcheck, su-exec for entrypoint, build tools for native modules)
 RUN apk add --no-cache curl su-exec python3 make g++ sqlite-dev
 
-# Copy package files
-COPY server/package.json server/pnpm-lock.yaml ./
+# Copy workspace config and lockfile
+COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
+COPY server/package.json ./server/
+COPY ui/package.json ./ui/
 
 # Install production dependencies (this will rebuild native modules for runtime image)
-RUN pnpm install --prod --frozen-lockfile
+RUN pnpm --filter @resonance/server install --prod --frozen-lockfile
 
 # Navigate into sqlite3's actual directory and build it manually for production
 RUN cd /app/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3 && \
@@ -92,10 +98,10 @@ RUN cd /app/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3 && \
     echo "SQLite3 production build complete"
 
 # Copy built server from builder
-COPY --from=server-builder /build/dist ./dist
+COPY --from=server-builder /build/server/dist ./dist
 
 # Copy built ui to static directory
-COPY --from=ui-builder /build/dist ./static
+COPY --from=ui-builder /build/ui/dist ./static
 
 # Clean up build tools to reduce image size
 RUN apk del python3 make g++
