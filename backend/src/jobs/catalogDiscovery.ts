@@ -84,7 +84,7 @@ export async function catalogDiscoveryJob(): Promise<void> {
     const similarArtistLimit = catalogConfig.similar_artist_limit || 10;
     let processedCount = 0;
 
-    for (const [_nameLower, artist] of Object.entries(libraryArtists)) {
+    for (const [_nameLower, artist] of Object.entries(libraryArtists)) { // eslint-disable-line
       processedCount++;
 
       // Rate limiting for Last.fm (5 requests/second max, we'll do 1/second to be safe)
