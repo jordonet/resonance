@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import type { QueueItem, QueueFilters } from '../types'
-import * as queueApi from '../api/queue'
+import type { QueueItem, QueueFilters } from '@/types'
+import * as queueApi from '@/api/queue'
 
 export const useQueueStore = defineStore('queue', () => {
   const items = ref<QueueItem[]>([])

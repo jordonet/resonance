@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { onMounted, watch } from 'vue'
-import { useQueueStore } from '../stores/queue'
-import QueueFilters from '../components/queue/QueueFilters.vue'
-import QueueList from '../components/queue/QueueList.vue'
+import { useQueueStore } from '@/stores/queue'
+import QueueFilters from '@/components/queue/QueueFilters.vue'
+import QueueList from '@/components/queue/QueueList.vue'
 
 const queueStore = useQueueStore()
 

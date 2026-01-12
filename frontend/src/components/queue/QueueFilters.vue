@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { QueueFilters } from '../../types'
+import type { QueueFilters } from '@/types'
 
 const props = defineProps<{
   modelValue: QueueFilters

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import StatsCard from '../components/common/StatsCard.vue'
-import LoadingSpinner from '../components/common/LoadingSpinner.vue'
-import * as queueApi from '../api/queue'
+import StatsCard from '@/components/common/StatsCard.vue'
+import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
+import * as queueApi from '@/api/queue'
 
 const stats = ref({
   pending: 0,

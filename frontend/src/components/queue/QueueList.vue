@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import QueueItemComponent from './QueueItem.vue'
-import LoadingSpinner from '../common/LoadingSpinner.vue'
-import type { QueueItem } from '../../types'
+import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
+import type { QueueItem } from '@/types'
 
 const props = defineProps<{
   items: QueueItem[] | undefined

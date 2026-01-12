@@ -1,5 +1,5 @@
 import client from './client'
-import type { QueueItem, PaginatedResponse, QueueFilters } from '../types'
+import type { QueueItem, PaginatedResponse, QueueFilters } from '@/types'
 
 export interface ApproveRequest {
   mbids: string[]

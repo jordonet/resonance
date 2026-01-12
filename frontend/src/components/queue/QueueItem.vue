@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { QueueItem } from '../../types'
+import type { QueueItem } from '@/types'
 
 defineProps<{
   item: QueueItem
