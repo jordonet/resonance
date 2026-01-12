@@ -1,6 +1,5 @@
 import type { Request, Response } from 'express';
-import type { MusicBrainzSearchResponse } from '@server/types/search';
-import type { AlbumSearchResult, ArtistSearchResult } from '@server/services/clients/MusicBrainzClient';
+import type { AlbumSearchResult, ArtistSearchResult, MusicBrainzSearchResponse } from '@server/types/search';
 
 import { BaseController } from '@server/controllers/BaseController';
 import { MusicBrainzClient } from '@server/services/clients/MusicBrainzClient';

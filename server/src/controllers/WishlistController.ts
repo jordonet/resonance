@@ -23,7 +23,7 @@ class WishlistController extends BaseController {
    */
   getWishlist = async(_req: Request, res: Response): Promise<Response> => {
     try {
-      const entries = this.wishlistService.getAll();
+      const entries = this.wishlistService.readAll();
 
       const response: WishlistResponse = {
         entries,

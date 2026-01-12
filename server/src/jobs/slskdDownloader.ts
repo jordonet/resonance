@@ -34,8 +34,8 @@ export async function slskdDownloaderJob(): Promise<void> {
 
     const wishlistService = new WishlistService();
 
-    // Read wishlist entries
-    const entries = wishlistService.readAll();
+    // Read wishlist entries (raw strings for slskd)
+    const entries = wishlistService.readAllRaw();
 
     if (entries.length === 0) {
       logger.debug('Wishlist is empty');
