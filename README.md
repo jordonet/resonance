@@ -223,14 +223,15 @@ See [docs/api.md](docs/api.md) for full API documentation.
 
 ## Architecture
 
-Resonance runs multiple services in a single container using s6-overlay:
+Resonance runs as a single Node.js process with background jobs scheduled via node-cron:
 
-| Service | Schedule | Purpose |
-|---------|----------|---------|
+| Job | Schedule | Purpose |
+|-----|----------|---------|
 | lb-fetch | Every 6 hours | ListenBrainz recommendations |
 | catalog-discovery | Weekly | Last.fm similar artists |
 | slskd-downloader | Every hour | Process wishlist via slskd |
-| web-ui | Always | FastAPI + Vue web interface |
+
+The web interface is served by Express with a Vue 3 frontend.
 
 See [docs/architecture.md](docs/architecture.md) for technical details.
 
@@ -239,10 +240,12 @@ See [docs/architecture.md](docs/architecture.md) for technical details.
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `TZ` | `UTC` | Timezone |
+| `PORT` | `8080` | HTTP server port |
+| `LOG_LEVEL` | `INFO` | Logging verbosity |
 | `LB_FETCH_INTERVAL` | `21600` | Seconds between lb-fetch runs (6h) |
 | `CATALOG_INTERVAL` | `604800` | Seconds between catalog discovery (7d) |
 | `SLSKD_INTERVAL` | `3600` | Seconds between download runs (1h) |
-| `LOG_LEVEL` | `INFO` | Logging verbosity |
+| `RUN_JOBS_ON_STARTUP` | `true` | Run discovery jobs immediately on startup |
 
 ## Data Directory
 
@@ -250,12 +253,10 @@ All state is stored in `/data`:
 
 ```
 /data/
-├── wishlist.txt              # Albums to download
-├── pending_queue.json        # Awaiting approval
-├── processed.json            # Already-fetched from ListenBrainz
-├── downloaded.json           # Already-sent to slskd
-├── catalog_artists.json      # Cached library artists
-└── catalog_discovered.json   # Already-discovered artists
+├── resonance.sqlite          # SQLite database (queue, processed items, etc.)
+├── wishlist.txt              # Albums to download (read by slskd-downloader)
+├── combined.log              # Application logs
+└── error.log                 # Error logs
 ```
 
 ## Network Requirements
@@ -286,13 +287,22 @@ docker build -t resonance .
 ```bash
 # Backend
 cd backend
-pip install -r requirements.txt
-uvicorn api.main:app --reload
+pnpm install
+pnpm run dev    # Starts on http://localhost:8080 with hot reload
 
-# Frontend
+# Frontend (separate terminal)
 cd frontend
 pnpm install
-pnpm run dev
+pnpm run dev    # Starts on http://localhost:5173, proxies to backend
+```
+
+### Production build
+
+```bash
+cd backend
+pnpm install
+pnpm run build
+pnpm start
 ```
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for development guidelines.
@@ -302,7 +312,8 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for development guidelines.
 - [x] ListenBrainz recommendations (lb-fetch)
 - [x] Catalog-based discovery (Last.fm similar artists)
 - [x] Unified pending queue with manual approval
-- [ ] Web UI (Phase 1 - MVP)
+- [x] Web UI with Vue 3 frontend
+- [x] Node.js/TypeScript backend migration
 - [ ] Download status dashboard
 - [ ] Library duplicate checking
 - [ ] Real-time WebSocket updates

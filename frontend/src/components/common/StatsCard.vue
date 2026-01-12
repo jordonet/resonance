@@ -1,7 +1,7 @@
 <script setup lang="ts">
 defineProps<{
   title: string
-  value: number | string
+  value: number | string | undefined
   color?: 'blue' | 'green' | 'purple' | 'orange'
 }>()
 </script>

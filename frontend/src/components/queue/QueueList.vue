@@ -5,7 +5,7 @@ import LoadingSpinner from '../common/LoadingSpinner.vue'
 import type { QueueItem } from '../../types'
 
 const props = defineProps<{
-  items: QueueItem[]
+  items: QueueItem[] | undefined
   loading: boolean
 }>()
 
@@ -18,7 +18,7 @@ const selectedMbids = ref<Set<string>>(new Set())
 
 const hasSelection = computed(() => selectedMbids.value.size > 0)
 const allSelected = computed(
-  () => props.items.length > 0 && selectedMbids.value.size === props.items.length
+  () => props.items && props.items.length > 0 && selectedMbids.value.size === props.items.length
 )
 
 function toggleSelect(mbid: string) {
@@ -33,7 +33,7 @@ function toggleSelectAll() {
   if (allSelected.value) {
     selectedMbids.value.clear()
   } else {
-    selectedMbids.value = new Set(props.items.map((item) => item.mbid))
+    selectedMbids.value = new Set(props.items?.map((item) => item.mbid) ?? [])
   }
 }
 
@@ -62,7 +62,7 @@ function rejectItem(mbid: string) {
   <div>
     <!-- Bulk Actions -->
     <div
-      v-if="items.length > 0"
+      v-if="items && items.length > 0"
       class="mb-4 flex items-center justify-between bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-3"
     >
       <div class="flex items-center gap-3">
@@ -74,7 +74,7 @@ function rejectItem(mbid: string) {
           class="w-4 h-4 text-indigo-600 bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded focus:ring-indigo-500 focus:ring-2"
         />
         <span class="text-sm text-gray-600 dark:text-gray-400">
-          {{ selectedMbids.size }} of {{ items.length }} selected
+          {{ selectedMbids.size }} of {{ items?.length }} selected
         </span>
       </div>
 
@@ -95,13 +95,13 @@ function rejectItem(mbid: string) {
     </div>
 
     <!-- Loading State -->
-    <div v-if="loading && items.length === 0" class="py-12">
+    <div v-if="loading && items?.length === 0" class="py-12">
       <LoadingSpinner size="lg" />
     </div>
 
     <!-- Empty State -->
     <div
-      v-else-if="items.length === 0"
+      v-else-if="!items || items?.length === 0"
       class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-12 text-center"
     >
       <svg
@@ -139,7 +139,7 @@ function rejectItem(mbid: string) {
     </div>
 
     <!-- Loading More Indicator -->
-    <div v-if="loading && items.length > 0" class="py-6">
+    <div v-if="loading && items && items.length > 0" class="py-6">
       <LoadingSpinner />
     </div>
   </div>

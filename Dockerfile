@@ -1,17 +1,20 @@
 # =============================================================================
-# Resonance Dockerfile
-# Multi-stage build: Frontend → Backend with s6-overlay
+# Resonance Dockerfile (Node.js Migration)
+# Multi-stage build: Frontend → Backend → Production Runtime
 # =============================================================================
 
 # =============================================================================
 # Stage 1: Build Frontend
 # =============================================================================
-FROM node:22-alpine AS frontend-builder
+FROM node:24-alpine AS frontend-builder
 
 WORKDIR /build
 
-# Install pnpm
-RUN corepack enable && corepack prepare pnpm@latest --activate
+# Make pnpm non-interactive
+ENV CI=true
+
+# Enable pnpm
+RUN corepack enable
 
 # Copy package files first for layer caching
 COPY frontend/package.json frontend/pnpm-lock.yaml ./
@@ -26,65 +29,98 @@ COPY frontend/ .
 RUN pnpm run build
 
 # =============================================================================
-# Stage 2: Python Base with s6-overlay
+# Stage 2: Build Backend
 # =============================================================================
-FROM python:3.12-slim AS base
+FROM node:24-alpine AS backend-builder
 
-# s6-overlay version
-ARG S6_OVERLAY_VERSION=3.2.1.0
+WORKDIR /build
 
-# Install xz-utils and curl
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    xz-utils \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
+# Make pnpm non-interactive
+ENV CI=true
 
-# Install s6-overlay
-ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz /tmp
-ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-x86_64.tar.xz /tmp
-RUN tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz \
-    && tar -C / -Jxpf /tmp/s6-overlay-x86_64.tar.xz \
-    && rm /tmp/s6-overlay-*.tar.xz
+# Enable pnpm
+RUN corepack enable
+
+# Build tools for native modules (Sequelize SQLite)
+RUN apk add --no-cache python3 make g++ sqlite-dev
+
+# Copy package files first for layer caching
+COPY backend/package.json backend/pnpm-lock.yaml ./
+
+# Install dependencies (including devDependencies for build)
+RUN pnpm install --frozen-lockfile
+
+# Navigate into sqlite3's actual directory and build it manually
+RUN cd /build/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3 && \
+    npm run install && \
+    ls -la build/ && \
+    echo "SQLite3 build complete"
+
+# Copy backend source
+COPY backend/src ./src
+COPY backend/tsconfig.json backend/tsconfig.build.json ./
+
+# Build TypeScript to JavaScript
+RUN pnpm run build
 
 # =============================================================================
-# Stage 3: Final Image
+# Stage 3: Production Runtime
 # =============================================================================
-FROM base AS final
+FROM node:24-alpine AS production
 
 WORKDIR /app
 
-# Install Python dependencies
-COPY backend/requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Make pnpm non-interactive
+ENV CI=true
 
-# Copy backend code
-COPY backend/api/ ./api/
-COPY backend/discovery/ ./discovery/
+# Enable pnpm
+RUN corepack enable
+
+# Install runtime dependencies (curl for healthcheck, su-exec for entrypoint, build tools for native modules)
+RUN apk add --no-cache curl su-exec python3 make g++ sqlite-dev
+
+# Copy package files
+COPY backend/package.json backend/pnpm-lock.yaml ./
+
+# Install production dependencies (this will rebuild native modules for runtime image)
+RUN pnpm install --prod --frozen-lockfile
+
+# Navigate into sqlite3's actual directory and build it manually for production
+RUN cd /app/node_modules/.pnpm/sqlite3@5.1.7/node_modules/sqlite3 && \
+    npm run install && \
+    ls -la build/ && \
+    echo "SQLite3 production build complete"
+
+# Copy built backend from builder
+COPY --from=backend-builder /build/dist ./dist
 
 # Copy built frontend to static directory
-COPY --from=frontend-builder /build/dist ./static/
+COPY --from=frontend-builder /build/dist ./static
 
-# Copy s6-overlay service definitions
-COPY s6-overlay/s6-rc.d/ /etc/s6-overlay/s6-rc.d/
-
-# Make service scripts executable
-RUN chmod +x /etc/s6-overlay/s6-rc.d/*/run 2>/dev/null || true \
-    && chmod +x /etc/s6-overlay/s6-rc.d/*/up 2>/dev/null || true
+# Clean up build tools to reduce image size
+RUN apk del python3 make g++
 
 # Environment variables
-ENV CONFIG_PATH=/config/config.yaml \
+ENV NODE_ENV=production \
+    CONFIG_PATH=/config/config.yaml \
     DATA_PATH=/data \
     LOG_LEVEL=INFO \
+    PORT=8080 \
+    HOST=0.0.0.0 \
     LB_FETCH_INTERVAL=21600 \
     CATALOG_INTERVAL=604800 \
     SLSKD_INTERVAL=3600 \
-    PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1
+    RUN_JOBS_ON_STARTUP=true
 
-# Create non-root user for services
-RUN useradd -r -s /bin/false resonance \
+# Create non-root user (use GID/UID 1001 to avoid conflict with node user at 1000)
+RUN addgroup -g 1001 resonance \
+    && adduser -D -u 1001 -G resonance resonance \
     && mkdir -p /data /config \
-    && chown -R resonance:resonance /app /data
+    && chown -R resonance:resonance /app /data /config
+
+# Copy entrypoint script
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 # Expose web UI port
 EXPOSE 8080
@@ -93,5 +129,5 @@ EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
     CMD curl -f http://localhost:8080/health || exit 1
 
-# s6-overlay entrypoint
-ENTRYPOINT ["/init"]
+# Entrypoint handles permissions and drops to resonance user
+ENTRYPOINT ["docker-entrypoint.sh"]
