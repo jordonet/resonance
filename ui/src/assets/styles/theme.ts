@@ -2,7 +2,22 @@ import { definePreset } from '@primeuix/themes';
 import Aura from '@primeuix/themes/aura';
 
 export const ResonancePreset = definePreset(Aura, {
+  primitive: {
+    borderRadius: {
+      none: '0',
+      xs:   '0.25rem',
+      sm:   '0.375rem',
+      md:   '0.5rem',
+      lg:   '0.75rem',
+      xl:   '1rem',
+    },
+  },
   semantic: {
+    // Typography
+    fontFamily: {
+      base: "'Space Grotesk', var(--font-family), sans-serif",
+      mono: "'JetBrains Mono', 'Courier New', monospace",
+    },
     // New primary palette based on mockup blue (#2b2bee)
     primary: {
       50:  '#eeeeff',
@@ -153,17 +168,114 @@ export const ResonancePreset = definePreset(Aura, {
         // Updated surface colors from mockup
         surface: {
           0:   '#ffffff',
-          50:  '#f6f6f8',      // Light background (from mockup)
+          50:  '#f6f6f8',
           100: '#e5e5eb',
           200: '#c5c5d0',
-          300: '#9d9db9',      // Text secondary (from mockup)
+          300: '#9d9db9',
           400: '#6b6b8a',
           500: '#3b3b54',
-          600: '#282839',      // Border dark (from mockup)
-          700: '#1c1c27',      // Surface dark (from mockup)
-          800: '#111118',      // Main dark background (from mockup)
+          600: '#282839',
+          700: '#1c1c27',
+          800: '#111118',
           900: '#0d0d12',
           950: '#080810',
+        },
+        // Form field tokens (inputs, selects, textareas)
+        formField: {
+          background:            '{surface.700}',
+          disabledBackground:    '{surface.800}',
+          filledBackground:      '{surface.700}',
+          filledHoverBackground: '{surface.600}',
+          filledFocusBackground: '{surface.600}',
+          borderColor:           '{surface.600}',
+          hoverBorderColor:      '{surface.500}',
+          focusBorderColor:      '{primary.color}',
+          invalidBorderColor:    '{red.400}',
+          color:                 '{surface.0}',
+          disabledColor:         '{surface.400}',
+          placeholderColor:      '{surface.400}',
+          floatLabelColor:       '{surface.400}',
+          floatLabelFocusColor:  '{primary.color}',
+          floatLabelActiveColor: '{surface.400}',
+          iconColor:             '{surface.400}',
+          shadow:                'none',
+        },
+        // Content tokens (cards, panels)
+        content: {
+          background:      '{surface.700}',
+          hoverBackground: '{surface.600}',
+          borderColor:     '{surface.600}',
+          color:           '{text.color}',
+          hoverColor:      '{text.hover.color}',
+        },
+        // Text tokens
+        text: {
+          color:           '{surface.0}',
+          hoverColor:      '{surface.0}',
+          mutedColor:      '{surface.300}',
+          hoverMutedColor: '{surface.200}',
+        },
+        // Overlay tokens (dropdowns, modals, popovers)
+        overlay: {
+          select: {
+            background:  '{surface.700}',
+            borderColor: '{surface.600}',
+            color:       '{text.color}',
+          },
+          popover: {
+            background:  '{surface.700}',
+            borderColor: '{surface.600}',
+            color:       '{text.color}',
+          },
+          modal: {
+            background:  '{surface.700}',
+            borderColor: '{surface.600}',
+            color:       '{text.color}',
+          },
+        },
+        // List tokens (dropdown options, listboxes)
+        list: {
+          option: {
+            focusBackground:         '{surface.600}',
+            selectedBackground:      '{highlight.background}',
+            selectedFocusBackground: '{highlight.focus.background}',
+            color:                   '{text.color}',
+            focusColor:              '{text.hover.color}',
+            selectedColor:           '{highlight.color}',
+            selectedFocusColor:      '{highlight.focus.color}',
+            icon:                    {
+              color:      '{surface.400}',
+              focusColor: '{surface.300}',
+            },
+          },
+          optionGroup: {
+            background: 'transparent',
+            color:      '{text.muted.color}',
+          },
+        },
+        // Navigation tokens (menus, sidebar items)
+        navigation: {
+          item: {
+            focusBackground:  '{surface.600}',
+            activeBackground: '{surface.600}',
+            color:            '{text.color}',
+            focusColor:       '{text.hover.color}',
+            activeColor:      '{text.hover.color}',
+            icon:             {
+              color:       '{surface.400}',
+              focusColor:  '{surface.300}',
+              activeColor: '{surface.300}',
+            },
+          },
+          submenuLabel: {
+            background: 'transparent',
+            color:      '{text.muted.color}',
+          },
+          submenuIcon: {
+            color:       '{surface.400}',
+            focusColor:  '{surface.300}',
+            activeColor: '{surface.300}',
+          },
         },
       },
     },

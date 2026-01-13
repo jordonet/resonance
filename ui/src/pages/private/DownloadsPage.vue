@@ -61,8 +61,6 @@
   font-weight: 700;
   color: white;
   margin: 0;
-  font-family: 'Space Grotesk', sans-serif;
-  letter-spacing: -0.025em;
 }
 
 .downloads-page__subtitle {
@@ -106,7 +104,6 @@
   font-weight: 700;
   color: white;
   margin: 0 0 0.75rem 0;
-  font-family: 'Space Grotesk', sans-serif;
 }
 
 .downloads-page__placeholder-text {

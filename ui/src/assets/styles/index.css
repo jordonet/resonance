@@ -15,27 +15,34 @@
   --border-subtle: rgba(255, 255, 255, 0.08);
   --border-glow: rgba(43, 43, 238, 0.5);
 
-  /* Animation tokens */
+  /* Animation tokens - not part of PrimeVue theme system */
   --transition-fast: 0.15s ease-in-out;
   --transition-normal: 0.3s ease;
   --shadow-glow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
-  --shadow-primary: 0 0 15px rgba(43, 43, 238, 0.3);
 }
 
 /* ============================================
    Base Styles
    ============================================ */
 body {
-  font-family: 'Space Grotesk', 'Noto Sans', var(--font-family), sans-serif;
+  font-family: 'Space Grotesk', var(--font-family), sans-serif;
   background: var(--surface-ground);
   color: var(--text-color);
+  letter-spacing: -0.015em;
+}
+
+/* Headings get bolder weight and tighter spacing */
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  font-weight: 700;
+  letter-spacing: -0.025em;
 }
 
 /* ============================================
    Glass Panel Effects
    ============================================ */
 .glass-panel {
-  background: var(--surface-glass);
+  background: var(--p-card-background);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--border-subtle);
@@ -43,12 +50,11 @@ body {
 }
 
 .glass-panel--solid {
-  background: var(--surface-glass-solid);
+  background: var(--surface-700);
 }
 
 .glass-panel--hover:hover {
-  border-color: var(--border-glow);
-  background: var(--surface-glass-solid);
+  border-color: var(--primary-500);
   transform: translateY(-2px);
   transition: all var(--transition-normal);
   box-shadow: var(--shadow-glow);
@@ -57,8 +63,15 @@ body {
 /* ============================================
    Typography
    ============================================ */
-.font-display { font-family: 'Space Grotesk', sans-serif; }
-.font-body { font-family: 'Noto Sans', sans-serif; }
+/* Font family utilities */
+.font-display {
+  font-family: 'Space Grotesk', sans-serif;
+  letter-spacing: -0.025em;
+}
+.font-body {
+  font-family: 'Noto Sans', sans-serif;
+  letter-spacing: normal;
+}
 
 /* Text sizes */
 .text-xs { font-size: 0.75rem; line-height: 1rem; }
@@ -462,12 +475,57 @@ body {
 /* ============================================
    PrimeVue Component Customizations
    ============================================ */
+
+/* Glass panel effect for cards */
 .p-card {
-  box-shadow: var(--card-shadow);
+  background: color-mix(in srgb, var(--surface-700) 70%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--surface-600);
+  box-shadow: var(--shadow-glow);
+}
+
+/* Consistent border radius for components */
+.p-card,
+.p-datatable,
+.p-message,
+.p-toast-message {
+  border-radius: 0.75rem;
+}
+
+/* Toast glass effect */
+.p-toast-message {
+  background: var(--surface-700);
+  border: 1px solid var(--surface-600);
+}
+
+/* DataTable styling */
+.p-datatable {
+  background: color-mix(in srgb, var(--surface-700) 70%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--surface-600);
 }
 
 .p-datatable .p-datatable-tbody > tr:hover {
   background: var(--highlight-bg);
+}
+
+/* Dialog glass effect */
+.p-dialog {
+  background: var(--surface-700);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--surface-600);
+  border-radius: 1rem;
+}
+
+/* Message glass styling */
+.p-message {
+  background: color-mix(in srgb, var(--surface-700) 70%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--surface-600);
 }
 
 /* Tag color variants */

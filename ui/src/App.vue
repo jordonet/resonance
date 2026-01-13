@@ -111,10 +111,8 @@ function handleLogout(): void {
   }
 
   &__title {
-    font-family: 'Space Grotesk', sans-serif;
     font-weight: 700;
     font-size: 1.125rem;
-    letter-spacing: -0.025em;
   }
 
   &__version {

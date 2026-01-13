@@ -232,7 +232,7 @@ const handleViewAllActivity = () => {
 
 /* Button styling */
 :deep(.dashboard__action-btn) {
-  background: var(--surface-glass);
+  background: color-mix(in srgb, var(--surface-700) 70%, transparent);
   border: 1px solid var(--border-subtle);
   color: white;
 }

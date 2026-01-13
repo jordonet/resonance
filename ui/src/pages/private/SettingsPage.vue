@@ -60,8 +60,6 @@
   font-weight: 700;
   color: white;
   margin: 0;
-  font-family: 'Space Grotesk', sans-serif;
-  letter-spacing: -0.025em;
 }
 
 .settings-page__subtitle {
@@ -104,7 +102,6 @@
   font-weight: 700;
   color: white;
   margin: 0 0 0.75rem 0;
-  font-family: 'Space Grotesk', sans-serif;
 }
 
 .settings-page__placeholder-text {
