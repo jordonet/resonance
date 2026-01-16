@@ -25,6 +25,7 @@ export const useDownloadsStore = defineStore('downloads', () => {
   const failedTotal = ref(0);
 
   const stats = ref<DownloadStats | null>(null);
+  const statsError = ref<string | null>(null);
 
   const loading = ref(false);
   const error = ref<string | null>(null);
@@ -33,6 +34,10 @@ export const useDownloadsStore = defineStore('downloads', () => {
     limit:  20,
     offset: 0,
   });
+
+  // Separate offset tracking for each list to avoid cross-tab pagination issues
+  const completedOffset = ref(0);
+  const failedOffset = ref(0);
 
   const hasMoreCompleted = computed(() => completedDownloads.value?.length < completedTotal.value);
   const hasMoreFailed = computed(() => failedDownloads.value?.length < failedTotal.value);
@@ -58,12 +63,16 @@ export const useDownloadsStore = defineStore('downloads', () => {
     error.value = null;
 
     try {
-      const response = await downloadsApi.getCompleted(filters.value);
+      // Use separate offset for completed list when appending
+      const requestFilters = append ? { ...filters.value, offset: completedOffset.value } : filters.value;
+
+      const response = await downloadsApi.getCompleted(requestFilters);
 
       if (append) {
         completedDownloads.value = [...completedDownloads.value, ...response.items];
       } else {
         completedDownloads.value = response.items;
+        completedOffset.value = 0;
       }
       completedTotal.value = response.total;
     } catch(e) {
@@ -78,12 +87,16 @@ export const useDownloadsStore = defineStore('downloads', () => {
     error.value = null;
 
     try {
-      const response = await downloadsApi.getFailed(filters.value);
+      // Use separate offset for failed list when appending
+      const requestFilters = append ? { ...filters.value, offset: failedOffset.value } : filters.value;
+
+      const response = await downloadsApi.getFailed(requestFilters);
 
       if (append) {
         failedDownloads.value = [...failedDownloads.value, ...response.items];
       } else {
         failedDownloads.value = response.items;
+        failedOffset.value = 0;
       }
       failedTotal.value = response.total;
     } catch(e) {
@@ -94,10 +107,13 @@ export const useDownloadsStore = defineStore('downloads', () => {
   }
 
   async function fetchStats() {
+    statsError.value = null;
+
     try {
       stats.value = await downloadsApi.getStats();
     } catch(e) {
-      // Don't set loading or error for stats - it's a background operation
+      // Set stats-specific error but don't block other operations
+      statsError.value = 'Failed to load stats';
       console.error('Failed to fetch download stats:', e);
     }
   }
@@ -135,13 +151,13 @@ export const useDownloadsStore = defineStore('downloads', () => {
   }
 
   function loadMoreCompleted() {
-    filters.value.offset += filters.value.limit;
+    completedOffset.value += filters.value.limit;
 
     return fetchCompleted(true);
   }
 
   function loadMoreFailed() {
-    filters.value.offset += filters.value.limit;
+    failedOffset.value += filters.value.limit;
 
     return fetchFailed(true);
   }
@@ -154,7 +170,10 @@ export const useDownloadsStore = defineStore('downloads', () => {
     failedDownloads.value = [];
     failedTotal.value = 0;
     stats.value = null;
+    statsError.value = null;
     filters.value.offset = 0;
+    completedOffset.value = 0;
+    failedOffset.value = 0;
   }
 
   return {
@@ -165,6 +184,7 @@ export const useDownloadsStore = defineStore('downloads', () => {
     failedDownloads,
     failedTotal,
     stats,
+    statsError,
     loading,
     error,
     filters,

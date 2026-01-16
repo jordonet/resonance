@@ -262,6 +262,27 @@ ui/src/
 
 ---
 
+## Technical Debt
+
+Items identified during PR #9 (download service) review that should be addressed post-merge:
+
+- [ ] **SlskdClient typed error hierarchy**
+  - Create error classes: SlskdAuthError, SlskdNotFoundError, SlskdRateLimitError, SlskdServerError
+  - Let callers handle different error types appropriately (retry vs fail vs alert)
+  - Surface actionable error messages to UI (e.g., "Check slskd API key" for auth errors)
+
+- [ ] **Client-side runtime validation**
+  - Add Zod schemas to UI for API response validation
+  - Catch malformed responses before they corrupt application state
+  - Provide meaningful error messages when validation fails
+
+- [ ] **DownloadTask state machine**
+  - Add state transition methods to the Sequelize model
+  - Enforce valid status progressions via beforeSave hooks
+  - Prevent invalid field combinations (e.g., errorMessage on completed tasks)
+
+---
+
 ## Future Enhancements (Post-v1.0)
 
 - [ ] Additional discovery sources

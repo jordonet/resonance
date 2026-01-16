@@ -13,6 +13,7 @@ export function useDownloads() {
   const failedDownloads = computed(() => store.failedDownloads);
   const failedTotal = computed(() => store.failedTotal);
   const stats = computed(() => store.stats);
+  const statsError = computed(() => store.statsError);
   const loading = computed(() => store.loading);
   const error = computed(() => store.error);
   const filters = computed(() => store.filters);
@@ -64,6 +65,7 @@ export function useDownloads() {
     failedDownloads,
     failedTotal,
     stats,
+    statsError,
     loading,
     error,
     filters,

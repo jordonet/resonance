@@ -1,5 +1,30 @@
-import axios, { AxiosInstance } from 'axios';
+import axios, { AxiosInstance, AxiosError } from 'axios';
 import logger from '@server/config/logger';
+
+/**
+ * Custom error class for slskd API errors that should be surfaced to callers.
+ * Auth errors (401/403) are non-retryable and indicate configuration issues.
+ */
+export class SlskdError extends Error {
+  constructor(
+    message: string,
+    // eslint-disable-next-line no-unused-vars
+    public readonly statusCode?: number,
+    // eslint-disable-next-line no-unused-vars
+    public readonly isAuthError: boolean = false
+  ) {
+    super(message);
+    this.name = 'SlskdError';
+  }
+
+  static fromAxiosError(error: AxiosError, context: string): SlskdError {
+    const status = error.response?.status;
+    const isAuthError = status === 401 || status === 403;
+    const message = isAuthError ? `${ context }: Authentication failed (status ${ status }) - check slskd API key` : `${ context }: ${ error.message }`;
+
+    return new SlskdError(message, status, isAuthError);
+  }
+}
 
 export interface SlskdSearchResponse {
   username:           string;
@@ -80,7 +105,14 @@ export class SlskdClient {
       return searchId;
     } catch(error) {
       if (axios.isAxiosError(error)) {
-        logger.error(`slskd search failed: ${ error.message }`);
+        const slskdError = SlskdError.fromAxiosError(error, 'slskd search failed');
+
+        logger.error(slskdError.message);
+
+        // Throw auth errors so callers can surface them properly
+        if (slskdError.isAuthError) {
+          throw slskdError;
+        }
       } else {
         logger.error(`slskd search failed: ${ String(error) }`);
       }
@@ -230,7 +262,13 @@ export class SlskdClient {
       return true;
     } catch(error) {
       if (axios.isAxiosError(error)) {
-        logger.error(`Failed to enqueue downloads: ${ error.message }`);
+        const slskdError = SlskdError.fromAxiosError(error, 'Failed to enqueue downloads');
+
+        logger.error(slskdError.message);
+
+        if (slskdError.isAuthError) {
+          throw slskdError;
+        }
       } else {
         logger.error(`Failed to enqueue downloads: ${ String(error) }`);
       }
@@ -249,7 +287,13 @@ export class SlskdClient {
       return response.data || [];
     } catch(error) {
       if (axios.isAxiosError(error)) {
-        logger.error(`Failed to get downloads: ${ error.message }`);
+        const slskdError = SlskdError.fromAxiosError(error, 'Failed to get downloads');
+
+        logger.error(slskdError.message);
+
+        if (slskdError.isAuthError) {
+          throw slskdError;
+        }
       } else {
         logger.error(`Failed to get downloads: ${ String(error) }`);
       }

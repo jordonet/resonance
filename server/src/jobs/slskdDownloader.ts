@@ -310,14 +310,6 @@ async function processWishlistEntry(params: {
     errorMessage:   undefined,
   });
 
-  await DownloadedItem.findOrCreate({
-    where:    { wishlistKey },
-    defaults: {
-      wishlistKey,
-      downloadedAt: new Date(),
-    },
-  });
-
   await slskdClient.deleteSearch(searchId);
 
   logger.info(`Queued download: ${ wishlistKey } (${ response.username }, ${ selection.files.length } files)`);

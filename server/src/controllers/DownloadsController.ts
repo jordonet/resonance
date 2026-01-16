@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import type { ActionResponse, PaginatedResponse } from '@server/types/responses';
+import type { PaginatedResponse } from '@server/types/responses';
 import type DownloadTaskModel from '@server/models/DownloadTask';
 import type { ActiveDownload, DownloadStats } from '@server/types/downloads';
 
@@ -176,12 +176,13 @@ class DownloadsController extends BaseController {
       const { ids } = parseResult.data;
 
       // Retry failed downloads
-      const { success, failed } = await this.downloadService.retry(ids);
+      const result = await this.downloadService.retry(ids);
 
-      const response: ActionResponse = {
-        success: true,
-        count:   success,
-        message: `Retried ${ success } downloads, ${ failed } failed`,
+      const response = {
+        success:  true,
+        count:    result.success,
+        message:  `Retried ${ result.success } downloads, ${ result.failed } failed`,
+        failures: result.failures,
       };
 
       return res.json(response);

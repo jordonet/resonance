@@ -19,9 +19,9 @@ export type DownloadStatus = z.infer<typeof downloadStatusSchema>;
  */
 export const downloadProgressSchema = z.object({
   filesCompleted:          z.number().int().nonnegative(),
-  filesTotal:              z.number().int().positive(),
+  filesTotal:              z.number().int().nonnegative(),
   bytesTransferred:        z.number().nonnegative(),
-  bytesTotal:              z.number().positive(),
+  bytesTotal:              z.number().nonnegative(),
   averageSpeed:            z.number().nonnegative().nullable(),
   estimatedTimeRemaining:  z.number().nonnegative().nullable(),
 });
@@ -42,8 +42,8 @@ export const activeDownloadSchema = z.object({
   slskdDirectory:  z.string().nullable(),
   fileCount:       z.number().int().positive().nullable(),
   progress:        downloadProgressSchema.nullable(),
-  queuedAt:        z.date(),
-  startedAt:       z.date().nullable(),
+  queuedAt:        z.coerce.date(),
+  startedAt:       z.coerce.date().nullable(),
 });
 
 export type ActiveDownload = z.infer<typeof activeDownloadSchema>;
@@ -59,8 +59,8 @@ export const completedDownloadSchema = z.object({
   type:            z.enum(['album', 'track']),
   slskdUsername:   z.string().nullable(),
   fileCount:       z.number().int().positive().nullable(),
-  queuedAt:        z.date(),
-  completedAt:     z.date(),
+  queuedAt:        z.coerce.date(),
+  completedAt:     z.coerce.date(),
 });
 
 export type CompletedDownload = z.infer<typeof completedDownloadSchema>;
@@ -76,8 +76,8 @@ export const failedDownloadSchema = z.object({
   type:            z.enum(['album', 'track']),
   errorMessage:    z.string().nullable(),
   retryCount:      z.number().int().nonnegative(),
-  queuedAt:        z.date(),
-  completedAt:     z.date(),
+  queuedAt:        z.coerce.date(),
+  completedAt:     z.coerce.date(),
 });
 
 export type FailedDownload = z.infer<typeof failedDownloadSchema>;

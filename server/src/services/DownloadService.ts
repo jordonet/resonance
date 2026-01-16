@@ -3,6 +3,7 @@ import type { ActiveDownload, DownloadProgress, DownloadStats } from '@server/ty
 import { Op } from '@sequelize/core';
 import logger from '@server/config/logger';
 import { getConfig } from '@server/config/settings';
+import DownloadedItem from '@server/models/DownloadedItem';
 import DownloadTask, { DownloadTaskType, DownloadTaskStatus } from '@server/models/DownloadTask';
 
 import SlskdClient, { type SlskdTransferFile, type SlskdUserTransfers } from './clients/SlskdClient';
@@ -40,9 +41,9 @@ export class DownloadService {
   }): Promise<{ items: ActiveDownload[]; total: number }> {
     const { limit = 50, offset = 0 } = params;
 
-    // Query database for active tasks
+    // Query database for active tasks (includes pending for retried items)
     let { rows, count } = await DownloadTask.findAndCountAll({
-      where: { status: { [Op.in]: ['searching', 'queued', 'downloading'] } },
+      where: { status: { [Op.in]: ['pending', 'searching', 'queued', 'downloading'] } },
       order: [['queuedAt', 'DESC']],
       limit,
       offset,
@@ -64,7 +65,7 @@ export class DownloadService {
 
       if (syncResult.activeSetChanged) {
         ({ rows, count } = await DownloadTask.findAndCountAll({
-          where: { status: { [Op.in]: ['searching', 'queued', 'downloading'] } },
+          where: { status: { [Op.in]: ['pending', 'searching', 'queued', 'downloading'] } },
           order: [['queuedAt', 'DESC']],
           limit,
           offset,
@@ -443,9 +444,15 @@ export class DownloadService {
   /**
    * Retry failed downloads - re-search and re-queue
    */
-  async retry(ids: string[]): Promise<{ success: number; failed: number }> {
+  async retry(ids: string[]): Promise<{
+    success:  number;
+    failed:   number;
+    failures: Array<{ id: string; wishlistKey: string; reason: string }>;
+  }> {
     if (!ids.length) {
-      return { success: 0, failed: 0 };
+      return {
+        success: 0, failed: 0, failures: [] 
+      };
     }
 
     // Find failed tasks
@@ -457,15 +464,25 @@ export class DownloadService {
     });
 
     if (!tasks.length) {
-      return { success: 0, failed: 0 };
+      return {
+        success: 0, failed: 0, failures: [] 
+      };
     }
 
     let successCount = 0;
     let failedCount = 0;
+    const failures: Array<{ id: string; wishlistKey: string; reason: string }> = [];
 
     for (const task of tasks) {
       try {
-        // Reset task status to pending
+        // Add to wishlist first (can fail safely without leaving inconsistent state)
+        this.wishlistService.append(
+          task.artist,
+          task.album,
+          task.type === 'album'
+        );
+
+        // Then reset task status to pending
         await task.update({
           status:          'pending',
           errorMessage:    undefined,
@@ -478,24 +495,25 @@ export class DownloadService {
           completedAt:     undefined,
         });
 
-        // Add back to wishlist for slskdDownloader job to pick up
-        this.wishlistService.append(
-          task.artist,
-          task.album,
-          task.type === 'album'
-        );
-
         successCount++;
-        logger.info(`Retry queued: ${ task.wishlistKey } (attempt ${ task.retryCount })`);
+        logger.info(`Retry queued: ${ task.wishlistKey } (attempt ${ task.retryCount + 1 })`);
       } catch(error) {
         failedCount++;
-        logger.error(`Failed to retry ${ task.wishlistKey }: ${ String(error) }`);
+        const reason = error instanceof Error ? error.message : String(error);
+
+        failures.push({
+          id:          task.id,
+          wishlistKey: task.wishlistKey,
+          reason,
+        });
+        logger.error(`Failed to retry ${ task.wishlistKey }: ${ reason }`);
       }
     }
 
     return {
       success: successCount,
       failed:  failedCount,
+      failures,
     };
   }
 
@@ -504,7 +522,7 @@ export class DownloadService {
    */
   async getStats(): Promise<DownloadStats> {
     const [active, queued, completed, failed] = await Promise.all([
-      DownloadTask.count({ where: { status: { [Op.in]: ['searching', 'downloading'] } } }),
+      DownloadTask.count({ where: { status: { [Op.in]: ['pending', 'searching', 'downloading'] } } }),
       DownloadTask.count({ where: { status: 'queued' } }),
       DownloadTask.count({ where: { status: 'completed' } }),
       DownloadTask.count({ where: { status: 'failed' } }),
@@ -602,6 +620,21 @@ export class DownloadService {
     }
 
     await DownloadTask.update(updateData, { where: { id } });
+
+    // Create DownloadedItem record when download completes successfully
+    if (status === 'completed') {
+      const task = await DownloadTask.findByPk(id);
+
+      if (task) {
+        await DownloadedItem.findOrCreate({
+          where:    { wishlistKey: task.wishlistKey },
+          defaults: {
+            wishlistKey:  task.wishlistKey,
+            downloadedAt: new Date(),
+          },
+        });
+      }
+    }
 
     logger.debug(`Updated task ${ id } to status ${ status }`);
   }
