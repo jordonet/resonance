@@ -124,6 +124,7 @@ Environment variables can override or supplement the config file:
 | `LB_FETCH_INTERVAL` | `21600` | Seconds between lb-fetch runs (default: 6 hours) |
 | `CATALOG_INTERVAL` | `604800` | Seconds between catalog discovery (default: 7 days) |
 | `SLSKD_INTERVAL` | `3600` | Seconds between download runs (default: 1 hour) |
+| `LIBRARY_SYNC_INTERVAL` | `86400` | Seconds between library sync runs (default: 24 hours) |
 | `LOG_LEVEL` | `INFO` | Logging level: `DEBUG`, `INFO`, `WARNING`, `ERROR` |
 | `CONFIG_PATH` | `/config/config.yaml` | Path to config file |
 | `DATA_PATH` | `/data` | Path to data directory |
@@ -189,6 +190,15 @@ Note: Use double underscore `__` for nested keys.
 | `mode` | string | No | `manual` | `auto` or `manual` |
 
 *Required if `enabled: true`
+
+### Library Duplicate Detection
+
+| Key | Type | Required | Default | Description |
+|-----|------|----------|---------|-------------|
+| `enabled` | bool | No | `false` | Enable library duplicate checking |
+| `auto_reject` | bool | No | `false` | Auto-reject items already in library |
+
+Requires `catalog_discovery.navidrome` to be configured for library sync.
 
 ### UI Authentication
 

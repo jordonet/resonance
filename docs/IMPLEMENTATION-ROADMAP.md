@@ -118,36 +118,36 @@ The project has been migrated from Python/FastAPI to Node.js/TypeScript/Express:
 **Goal:** Monitor download pipeline
 
 ### Server Tasks
-- [ ] **slskd integration endpoints**
-  - [ ] `GET /api/v1/downloads/active`
-  - [ ] `GET /api/v1/downloads/completed`
-  - [ ] `GET /api/v1/downloads/failed`
-  - [ ] `POST /api/v1/downloads/retry`
-  - [ ] `GET /api/v1/wishlist`
+- [x] **slskd integration endpoints**
+  - [x] `GET /api/v1/downloads/active`
+  - [x] `GET /api/v1/downloads/completed`
+  - [x] `GET /api/v1/downloads/failed`
+  - [x] `POST /api/v1/downloads/retry`
+  - [x] `GET /api/v1/wishlist`
 
 ### UI Tasks
-- [ ] **Downloads view**
-  - [ ] Active downloads with progress
-  - [ ] Completed downloads
-  - [ ] Failed downloads with retry
-  - [ ] Wishlist view
+- [x] **Downloads view**
+  - [x] Active downloads with progress
+  - [x] Completed downloads
+  - [x] Failed downloads with retry
+  - [x] Wishlist view
 
 ---
 
-## Phase 5: Library Duplicate Detection
+## Phase 5: Library Duplicate Detection ✅ COMPLETED
 
 **Goal:** Avoid downloading what you already own
 
 ### Server Tasks
-- [ ] **Library checking**
-  - [ ] Check if album exists in Navidrome library
-  - [ ] Mark duplicates in queue
-  - [ ] Optional: auto-reject duplicates
+- [x] **Library checking**
+  - [x] Check if album exists in Navidrome library
+  - [x] Mark duplicates in queue
+  - [x] Optional: auto-reject duplicates
 
 ### UI Tasks
-- [ ] **UI indicators**
-  - [ ] "Already in library" badge on queue items
-  - [ ] Library stats on dashboard
+- [x] **UI indicators**
+  - [x] "Already in library" badge on queue items
+  - [x] Library stats on dashboard
 
 ---
 

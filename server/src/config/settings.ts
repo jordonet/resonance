@@ -47,6 +47,11 @@ const CatalogDiscoverySettingsSchema = z.object({
   mode:                 z.enum(['auto', 'manual']),
 });
 
+const LibraryDuplicateSettingsSchema = z.object({
+  enabled:     z.boolean(),
+  auto_reject: z.boolean().optional(),
+});
+
 const ConfigSchema = z.object({
   debug:             z.boolean(),
   mode:              z.enum(['album', 'track']),
@@ -54,6 +59,7 @@ const ConfigSchema = z.object({
   listenbrainz:      ListenBrainzSettingsSchema.optional(),
   slskd:             SlskdSettingsSchema.optional(),
   catalog_discovery: CatalogDiscoverySettingsSchema,
+  library_duplicate: LibraryDuplicateSettingsSchema.optional(),
   ui:                UISettingsSchema,
 });
 
@@ -63,6 +69,7 @@ export type UISettings = z.infer<typeof UISettingsSchema>;
 export type ListenBrainzSettings = z.infer<typeof ListenBrainzSettingsSchema>;
 export type SlskdSettings = z.infer<typeof SlskdSettingsSchema>;
 export type CatalogDiscoverySettings = z.infer<typeof CatalogDiscoverySettingsSchema>;
+export type LibraryDuplicateSettings = z.infer<typeof LibraryDuplicateSettingsSchema>;
 
 /**
  * Default configuration values
