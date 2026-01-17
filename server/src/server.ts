@@ -5,6 +5,8 @@ import logger from '@server/config/logger';
 import { initDb, stopDb } from '@server/config/db';
 import app from '@server/plugins/app';
 import { startJobs, stopJobs } from '@server/plugins/jobs';
+import { initIo, stopIo } from '@server/plugins/io';
+import { startProgressSync, stopProgressSync } from '@server/plugins/progressSync';
 import { migrateJsonToSqlite } from './scripts/migrate-json-to-sqlite';
 
 const PORT = parseInt(process.env.PORT || '8080', 10);
@@ -12,26 +14,22 @@ const HOST = process.env.HOST || '0.0.0.0';
 
 let server: http.Server | null = null;
 
-/**
- * Start the Resonance server
- */
 async function startServer(): Promise<void> {
   try {
     logger.info('Starting Resonance server...');
 
-    // 1. Initialize database
     logger.info('Initializing database...');
     await initDb();
     logger.info('Database initialized');
 
-    // 2. Run data migration (if needed)
     logger.info('Checking for data migration...');
     await migrateJsonToSqlite();
 
-    // 3. Create HTTP server
     server = http.createServer(app);
 
-    // 4. Start listening
+    logger.info('Initializing Socket.io...');
+    initIo(server);
+
     await new Promise<void>((resolve, reject) => {
       server!.listen(PORT, HOST, () => {
         const addr = server!.address() as AddressInfo;
@@ -46,9 +44,11 @@ async function startServer(): Promise<void> {
       });
     });
 
-    // 5. Start background jobs
     logger.info('Starting background jobs...');
     startJobs();
+
+    logger.info('Starting download progress sync...');
+    startProgressSync();
 
     logger.info('Resonance server started successfully');
   } catch(error) {
@@ -57,14 +57,13 @@ async function startServer(): Promise<void> {
   }
 }
 
-/**
- * Gracefully shutdown the server
- */
 async function shutdownServer(signal: string): Promise<void> {
   logger.info(`Received ${ signal }, shutting down gracefully...`);
 
   try {
-    // 1. Stop accepting new requests
+    logger.info('Closing Socket.io connections...');
+    await stopIo();
+
     if (server) {
       await new Promise<void>((resolve, reject) => {
         server!.close((err) => {
@@ -79,11 +78,12 @@ async function shutdownServer(signal: string): Promise<void> {
       });
     }
 
-    // 2. Stop background jobs
     logger.info('Stopping background jobs...');
     stopJobs();
 
-    // 3. Close database connections
+    logger.info('Stopping download progress sync...');
+    stopProgressSync();
+
     logger.info('Closing database connections...');
     await stopDb();
 
@@ -95,9 +95,6 @@ async function shutdownServer(signal: string): Promise<void> {
   }
 }
 
-/**
- * Register shutdown handlers
- */
 function registerShutdownHandlers(): void {
   // Graceful shutdown on SIGTERM (Docker, Kubernetes)
   process.on('SIGTERM', () => shutdownServer('SIGTERM'));
@@ -105,7 +102,6 @@ function registerShutdownHandlers(): void {
   // Graceful shutdown on SIGINT (Ctrl+C)
   process.on('SIGINT', () => shutdownServer('SIGINT'));
 
-  // Log unhandled rejections
   process.on('unhandledRejection', (reason, promise) => {
     logger.error('Unhandled Promise Rejection:', {
       reason,
@@ -113,22 +109,15 @@ function registerShutdownHandlers(): void {
     });
   });
 
-  // Log uncaught exceptions
   process.on('uncaughtException', (error) => {
     logger.error('Uncaught Exception:', { error });
-    // Exit after logging uncaught exception
     process.exit(1);
   });
 }
 
-/**
- * Main entry point
- */
 async function main(): Promise<void> {
-  // Register shutdown handlers first
   registerShutdownHandlers();
 
-  // Start the server
   await startServer();
 }
 

@@ -1,0 +1,61 @@
+import type { Socket } from 'socket.io-client';
+import type {
+  QueueItemAddedEvent,
+  QueueItemUpdatedEvent,
+  QueueStatsUpdatedEvent,
+} from '@/types/socket';
+
+import { onMounted, onUnmounted } from 'vue';
+import { useQueueStore } from '@/stores/queue';
+import { useSocketConnection } from './useSocketConnection';
+
+export function useQueueSocket() {
+  const { connected, connect, disconnect } = useSocketConnection('/queue');
+  const store = useQueueStore();
+
+  let socket: Socket | null = null;
+
+  function handleItemAdded(event: QueueItemAddedEvent) {
+    store.items.unshift(event.item);
+    store.total++;
+  }
+
+  function handleItemUpdated(event: QueueItemUpdatedEvent) {
+    // Item was approved/rejected, remove it
+    const index = store.items.findIndex((item) => item.mbid === event.mbid);
+
+    if (index !== -1) {
+      store.items.splice(index, 1);
+      store.total = Math.max(0, store.total - 1);
+    }
+  }
+
+  function handleStatsUpdated(event: QueueStatsUpdatedEvent) {
+    // Stats are primarily used by DashboardPage via useStats
+    // The total is already updated by add/remove handlers
+    // This event is useful for keeping multiple clients in sync
+    if (store.total !== event.pending) {
+      store.total = event.pending;
+    }
+  }
+
+  onMounted(() => {
+    socket = connect();
+
+    socket.on('queue:item:added', handleItemAdded);
+    socket.on('queue:item:updated', handleItemUpdated);
+    socket.on('queue:stats:updated', handleStatsUpdated);
+  });
+
+  onUnmounted(() => {
+    if (socket) {
+      socket.off('queue:item:added', handleItemAdded);
+      socket.off('queue:item:updated', handleItemUpdated);
+      socket.off('queue:stats:updated', handleStatsUpdated);
+    }
+
+    disconnect();
+  });
+
+  return { connected };
+}
