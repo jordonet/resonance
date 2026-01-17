@@ -108,8 +108,6 @@ library_duplicate:
   # If false, items are just marked as "In Library" for manual review
   auto_reject: false
 
-# Note: Sync interval is controlled via LIBRARY_SYNC_INTERVAL env var (default: 86400 = 24h)
-
 # -----------------------------------------------------------------------------
 # Web UI Settings
 # -----------------------------------------------------------------------------

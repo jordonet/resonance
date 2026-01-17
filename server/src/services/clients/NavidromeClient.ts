@@ -151,6 +151,12 @@ export class NavidromeClient {
 
         if (subsonicResp.status !== 'ok') {
           const error = subsonicResp.error || {};
+          const code = error.code;
+
+          // Subsonic error codes: 0=generic, 10=missing param, 40=auth, 50=not allowed, 70=not found
+          if (code === 40 || code === 50) {
+            throw new Error(`Subsonic auth error: ${ error.message || 'Authentication failed' }`);
+          }
 
           logger.error(`Subsonic API error: ${ error.message || 'Unknown error' }`);
 

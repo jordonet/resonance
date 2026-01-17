@@ -214,7 +214,9 @@ export class LibraryService {
     let updatedCount = 0;
 
     for (const item of pendingItems) {
-      if (!item.album) continue;
+      if (!item.album) {
+        continue;
+      }
 
       const key = createLookupKey(item.artist, item.album);
       const inLibrary = libraryMatches.get(key) ?? false;
@@ -230,7 +232,7 @@ export class LibraryService {
           logger.info(`Auto-rejecting duplicate: ${ item.artist } - ${ item.album }`);
         }
 
-        await QueueItem.update(updates, { where: { id: item.id } });
+        await QueueItem.update(updates, { where: { id: item.id, status: 'pending' } });
 
         updatedCount++;
       }

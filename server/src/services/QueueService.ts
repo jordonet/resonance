@@ -47,7 +47,7 @@ export class QueueService {
 
     // Filter out items already in library if requested
     if (hideInLibrary) {
-      where.inLibrary = { [Op.ne]: true };
+      where.inLibrary = { [Op.or]: [{ [Op.eq]: false }, { [Op.eq]: null }] };
     }
 
     // Map sort field to column name

@@ -48,9 +48,8 @@ const CatalogDiscoverySettingsSchema = z.object({
 });
 
 const LibraryDuplicateSettingsSchema = z.object({
-  enabled:       z.boolean(),
-  auto_reject:   z.boolean().optional(),
-  sync_interval: z.number().int().positive().optional(),
+  enabled:     z.boolean(),
+  auto_reject: z.boolean().optional(),
 });
 
 const ConfigSchema = z.object({

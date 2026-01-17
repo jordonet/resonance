@@ -67,7 +67,7 @@ const similarTag = computed(() => {
   return null;
 });
 
-const isInLibrary = computed(() => props.item.in_library === true);
+const isInLibrary = computed(() => props.item.in_library);
 
 const getDefaultCover = () => {
   return 'data:image/svg+xml,' + encodeURIComponent(`
