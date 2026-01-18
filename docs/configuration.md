@@ -32,6 +32,7 @@ mode: "album"
 # Minimum recommendation score (0-100)
 # 0 = accept all recommendations
 # Higher values = only highly-relevant recommendations
+# (If you prefer, you can also use 0-1 and it will be treated as a fraction.)
 min_score: 0
 
 # Number of recommendations to fetch per run
@@ -94,6 +95,54 @@ catalog_discovery:
   mode: "manual"
 
 # =============================================================================
+# Library Duplicate Detection (Optional)
+# Avoid downloading albums you already own
+# Requires catalog_discovery.navidrome to be configured
+# =============================================================================
+library_duplicate:
+  # Enable library duplicate checking
+  enabled: true
+
+  # Auto-reject items that already exist in your library
+  # If false, items are just marked as "In Library" for manual review
+  auto_reject: false
+
+# =============================================================================
+# Library Organization (Optional)
+# Move completed slskd downloads into your music library
+# =============================================================================
+library_organize:
+  # Enable library organization
+  enabled: false
+
+  # Where slskd saves completed downloads (must be accessible to Resonance)
+  # This path must be mounted as a volume in your docker-compose.yaml
+  downloads_path: "/downloads/complete"
+
+  # Destination music library path (must be accessible to Resonance)
+  # This path must be mounted as a volume in your docker-compose.yaml
+  library_path: "/music/library"
+
+  # Organization mode: "flat" or "artist_album"
+  # flat: Places album folders directly in library_path
+  # artist_album: Creates Artist/Album folder structure
+  organization: "artist_album"
+
+  # If true, run automatically on an interval (see LIBRARY_ORGANIZE_INTERVAL env var)
+  auto_organize: false
+
+  # Delete the source folder after a successful transfer
+  delete_after_move: true
+
+  # Trigger a Navidrome rescan after organizing (requires catalog_discovery.navidrome)
+  navidrome_rescan: false
+
+  # Optional beets integration for tagging/import (requires beets installed in the container)
+  beets:
+    enabled: false
+    command: "beet import --quiet"
+
+# =============================================================================
 # Web UI Settings
 # =============================================================================
 ui:
@@ -126,6 +175,7 @@ Environment variables can override or supplement the config file:
 | `CATALOG_INTERVAL` | `604800` | Seconds between catalog discovery (default: 7 days) |
 | `SLSKD_INTERVAL` | `3600` | Seconds between download runs (default: 1 hour) |
 | `LIBRARY_SYNC_INTERVAL` | `86400` | Seconds between library sync runs (default: 24 hours) |
+| `LIBRARY_ORGANIZE_INTERVAL` | `0` | Seconds between library organize runs (0 = manual only) |
 | `RUN_JOBS_ON_STARTUP` | `true` | Run jobs once on startup (`false` to disable) |
 | `LOG_LEVEL` | `debug` (dev), `info` (prod) | Logging level (case-insensitive): `debug`, `info`, `warn`, `error` |
 | `LOG_DIR` | `DATA_PATH` | Directory for log files (when file logging is enabled) |
@@ -169,7 +219,7 @@ Note: Use double underscore `__` for nested keys.
 |-----|------|----------|---------|-------------|
 | `debug` | bool | No | `false` | Enable debug logging/features |
 | `mode` | string | No | `album` | `album` or `track` |
-| `min_score` | float | No | `0` | Minimum recommendation score (0-100) |
+| `min_score` | float | No | `0` | Minimum recommendation score (0-100, or 0-1 as a fraction) |
 | `fetch_count` | int | No | `100` | Recommendations per run |
 
 ### slskd
@@ -207,6 +257,24 @@ Note: Use double underscore `__` for nested keys.
 | `auto_reject` | bool | No | `false` | Auto-reject items already in library |
 
 Requires `catalog_discovery.navidrome` to be configured for library sync.
+
+### Library Organization
+
+| Key | Type | Required | Default | Description |
+|-----|------|----------|---------|-------------|
+| `enabled` | bool | No | `false` | Enable library organization |
+| `downloads_path` | string | Yes* | - | Where slskd writes completed downloads |
+| `library_path` | string | Yes* | - | Destination music library path |
+| `organization` | string | No | `artist_album` | `flat` or `artist_album`. **`flat`**: Places album folders directly in library_path **`artist_album`**: Creates Artist/Album folder structure |
+| `auto_organize` | bool | No | `false` | Enable scheduling (requires `LIBRARY_ORGANIZE_INTERVAL > 0`) |
+| `delete_after_move` | bool | No | `true` | Delete source after organizing |
+| `navidrome_rescan` | bool | No | `false` | Trigger Navidrome `startScan` after organizing |
+| `beets.enabled` | bool | No | `false` | Run beets import before moving |
+| `beets.command` | string | No | `beet import --quiet` | beets command (import path is appended) |
+
+*Required if `enabled: true`
+
+If `navidrome_rescan: true`, `catalog_discovery.navidrome` must be configured.
 
 ### UI Authentication
 
