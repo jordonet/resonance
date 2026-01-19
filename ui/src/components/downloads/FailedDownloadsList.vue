@@ -15,6 +15,7 @@ interface Props {
 
 interface Emits {
   (e: 'retry', ids: string[]): void;
+  (e: 'delete', ids: string[]): void;
 }
 
 defineProps<Props>();
@@ -30,17 +31,33 @@ const handleRetry = () => {
     selectedDownloads.value = [];
   }
 };
+
+const handleDelete = () => {
+  const ids = selectedDownloads.value.map((d) => d.id);
+
+  if (ids.length) {
+    emit('delete', ids);
+    selectedDownloads.value = [];
+  }
+};
 </script>
 
 <template>
   <div class="failed-downloads-list">
-    <div class="flex justify-content-end mb-3" v-if="downloads.length">
+    <div class="flex justify-content-end gap-2 mb-3" v-if="downloads.length">
       <Button
         label="Retry Selected"
         icon="pi pi-refresh"
         severity="warning"
         :disabled="!selectedDownloads.length"
         @click="handleRetry"
+      />
+      <Button
+        label="Delete Selected"
+        icon="pi pi-trash"
+        severity="danger"
+        :disabled="!selectedDownloads.length"
+        @click="handleDelete"
       />
     </div>
 
@@ -85,13 +102,22 @@ const handleRetry = () => {
 
       <Column header="Actions">
         <template #body="{ data }">
-          <Button
-            icon="pi pi-refresh"
-            severity="warning"
-            size="small"
-            outlined
-            @click="emit('retry', [data.id])"
-          />
+          <div class="flex gap-1">
+            <Button
+              icon="pi pi-refresh"
+              severity="warning"
+              size="small"
+              outlined
+              @click="emit('retry', [data.id])"
+            />
+            <Button
+              icon="pi pi-trash"
+              severity="danger"
+              size="small"
+              outlined
+              @click="emit('delete', [data.id])"
+            />
+          </div>
         </template>
       </Column>
     </DataTable>

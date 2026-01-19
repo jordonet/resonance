@@ -41,6 +41,10 @@ export function useDownloads() {
     return store.retryFailed(ids);
   }
 
+  async function deleteDownloads(ids: string[]) {
+    return store.deleteDownloads(ids);
+  }
+
   function updateFilters(filters: Partial<DownloadFilters>) {
     store.setFilters(filters);
   }
@@ -78,6 +82,7 @@ export function useDownloads() {
     fetchFailed,
     fetchStats,
     retryFailed,
+    deleteDownloads,
     updateFilters,
     loadMoreCompleted,
     loadMoreFailed,
