@@ -51,6 +51,12 @@ export const routes: RouteRecordRaw[] = [
     meta:      { requiresAuth: true },
   },
   {
+    path:      ROUTE_PATHS.LIBRARY,
+    name:      ROUTE_NAMES.LIBRARY,
+    component: () => import('@/pages/private/LibraryPage.vue'),
+    meta:      { requiresAuth: true },
+  },
+  {
     path:      ROUTE_PATHS.SETTINGS,
     name:      ROUTE_NAMES.SETTINGS,
     component: () => import('@/pages/private/SettingsPage.vue'),
