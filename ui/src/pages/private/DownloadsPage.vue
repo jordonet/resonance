@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue';
+import { onMounted } from 'vue';
 import { useDownloads } from '@/composables/useDownloads';
 import { useDownloadsSocket } from '@/composables/useDownloadsSocket';
 import { useJobs } from '@/composables/useJobs';
@@ -40,16 +40,9 @@ const {
 useDownloadsSocket();
 
 const {
-  // jobs,
   triggeringJob,
   triggerDownloader
 } = useJobs();
-
-// const isJobRunning = computed(() => (name: string) => {
-//   const job = jobs.value.find((j) => j.name === name);
-
-//   return job?.running ?? false;
-// });
 
 const loadData = async() => {
   await Promise.all([
@@ -80,7 +73,7 @@ const handleTriggerDownloader = async() => {
   } catch {
     // Error is already handled in the store
   }
-}
+};
 
 onMounted(() => {
   loadData();
