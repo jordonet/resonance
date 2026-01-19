@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { onMounted } from 'vue';
+import { computed, onMounted } from 'vue';
 import { useDownloads } from '@/composables/useDownloads';
 import { useDownloadsSocket } from '@/composables/useDownloadsSocket';
+import { useJobs } from '@/composables/useJobs';
+import { JOB_NAMES } from '@/constants/jobs';
 
 import Tabs from 'primevue/tabs';
 import TabList from 'primevue/tablist';
@@ -32,9 +34,22 @@ const {
   fetchFailed,
   fetchStats,
   retryFailed,
+  deleteDownloads,
 } = useDownloads();
 
 useDownloadsSocket();
+
+const {
+  // jobs,
+  triggeringJob,
+  triggerDownloader
+} = useJobs();
+
+// const isJobRunning = computed(() => (name: string) => {
+//   const job = jobs.value.find((j) => j.name === name);
+
+//   return job?.running ?? false;
+// });
 
 const loadData = async() => {
   await Promise.all([
@@ -55,6 +70,18 @@ const handleRetry = async(ids: string[]) => {
   await fetchFailed();
 };
 
+const handleDelete = async(ids: string[]) => {
+  await deleteDownloads(ids);
+};
+
+const handleTriggerDownloader = async() => {
+  try {
+    await triggerDownloader();
+  } catch {
+    // Error is already handled in the store
+  }
+}
+
 onMounted(() => {
   loadData();
 });
@@ -69,12 +96,21 @@ onMounted(() => {
           Monitor and manage your download queue.
         </p>
       </div>
-      <Button
-        label="Refresh"
-        icon="pi pi-refresh"
-        @click="handleRefresh"
-        :loading="loading"
-      />
+      <div class="flex gap-4">
+        <Button
+          label="Process Downloads"
+          icon="pi pi-download"
+          :loading="triggeringJob === JOB_NAMES.SLSKD"
+          @click="handleTriggerDownloader"
+          outlined
+        />
+        <Button
+          label="Refresh"
+          icon="pi pi-refresh"
+          @click="handleRefresh"
+          :loading="loading"
+        />
+      </div>
     </header>
 
     <Message v-if="error" severity="error" :closable="false" class="mb-4">
@@ -94,6 +130,7 @@ onMounted(() => {
           <ActiveDownloadsList
             :downloads="activeDownloads"
             :loading="loading"
+            @delete="handleDelete"
           />
         </TabPanel>
 
@@ -101,6 +138,7 @@ onMounted(() => {
           <CompletedDownloadsList
             :downloads="completedDownloads"
             :loading="loading"
+            @delete="handleDelete"
           />
         </TabPanel>
 
@@ -109,6 +147,7 @@ onMounted(() => {
             :downloads="failedDownloads"
             :loading="loading"
             @retry="handleRetry"
+            @delete="handleDelete"
           />
         </TabPanel>
       </TabPanels>

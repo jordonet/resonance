@@ -13,6 +13,10 @@ export interface RetryRequest {
   ids: string[];
 }
 
+export interface DeleteRequest {
+  ids: string[];
+}
+
 export async function getActive(filters: DownloadFilters): Promise<PaginatedResponse<ActiveDownload>> {
   const params: Record<string, number> = {
     limit:  filters.limit,
@@ -61,4 +65,13 @@ export async function getStats(): Promise<DownloadStats> {
   const response = await client.get<DownloadStats>('/downloads/stats');
 
   return response.data;
+}
+
+export async function deleteDownloads(request: DeleteRequest): Promise<{ success: number; failed: number }> {
+  const response = await client.delete<{ count: number }>('/downloads', { data: request });
+
+  return {
+    success: response.data.count,
+    failed:  0,
+  };
 }

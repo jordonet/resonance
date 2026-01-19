@@ -142,6 +142,36 @@ export const useDownloadsStore = defineStore('downloads', () => {
     }
   }
 
+  async function deleteDownloads(ids: string[]) {
+    loading.value = true;
+    error.value = null;
+
+    try {
+      const result = await downloadsApi.deleteDownloads({ ids });
+
+      // Remove deleted items from all lists (item could be in any tab)
+      activeDownloads.value = activeDownloads.value.filter((d) => !ids.includes(d.id));
+      activeTotal.value = Math.max(0, activeTotal.value - result.success);
+
+      completedDownloads.value = completedDownloads.value.filter((d) => !ids.includes(d.id));
+      completedTotal.value = Math.max(0, completedTotal.value - result.success);
+
+      failedDownloads.value = failedDownloads.value.filter((d) => !ids.includes(d.id));
+      failedTotal.value = Math.max(0, failedTotal.value - result.success);
+
+      showSuccess('Downloads deleted', `${ result.success } download(s) removed`);
+
+      // Refresh stats
+      await fetchStats();
+    } catch(e) {
+      error.value = e instanceof Error ? e.message : 'Failed to delete downloads';
+      showError('Failed to delete downloads');
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
   function setFilters(newFilters: Partial<DownloadFilters>) {
     filters.value = {
       ...filters.value,
@@ -197,6 +227,7 @@ export const useDownloadsStore = defineStore('downloads', () => {
     fetchFailed,
     fetchStats,
     retryFailed,
+    deleteDownloads,
     setFilters,
     loadMoreCompleted,
     loadMoreFailed,
