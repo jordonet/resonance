@@ -19,11 +19,14 @@ import { triggerJob } from '@server/plugins/jobs';
 
 import SlskdClient from './clients/SlskdClient';
 import WishlistService from './WishlistService';
-import { joinDownloadsPath, normalizeSlskdPath, slskdDirectoryToRelativeDownloadPath, slskdPathBasename, toSafeRelativePath } from '@server/utils/slskdPaths';
+import {
+  joinDownloadsPath, normalizeSlskdPath, slskdDirectoryToRelativeDownloadPath, slskdPathBasename, toSafeRelativePath 
+} from '@server/utils/slskdPaths';
 
 async function pathExists(candidatePath: string): Promise<boolean> {
   try {
     await fs.promises.access(candidatePath, fs.constants.F_OK);
+
     return true;
   } catch {
     return false;
@@ -571,15 +574,17 @@ export class DownloadService {
     failures: Array<{ id: string; reason: string }>;
   }> {
     if (!ids.length) {
-      return { success: 0, failed: 0, failures: [] };
+      return {
+        success: 0, failed: 0, failures: [] 
+      };
     }
 
-    const tasks = await DownloadTask.findAll({
-      where: { id: { [Op.in]: ids } },
-    });
+    const tasks = await DownloadTask.findAll({ where: { id: { [Op.in]: ids } } });
 
     if (!tasks.length) {
-      return { success: 0, failed: 0, failures: [] };
+      return {
+        success: 0, failed: 0, failures: [] 
+      };
     }
 
     let successCount = 0;
@@ -593,7 +598,7 @@ export class DownloadService {
           for (const fileId of task.slskdFileIds) {
             try {
               await this.slskdClient.cancelDownload(task.slskdUsername, fileId);
-            } catch (cancelError) {
+            } catch(cancelError) {
               // Log but don't fail the delete if slskd cancel fails
               logger.debug(`Failed to cancel slskd transfer ${ fileId }: ${ String(cancelError) }`);
             }
@@ -608,12 +613,12 @@ export class DownloadService {
 
         successCount++;
         logger.info(`Deleted download task: ${ task.wishlistKey }`);
-      } catch (error) {
+      } catch(error) {
         failedCount++;
         const reason = error instanceof Error ? error.message : String(error);
 
         failures.push({
-          id:     task.id,
+          id: task.id,
           reason,
         });
         logger.error(`Failed to delete ${ task.wishlistKey }: ${ reason }`);
@@ -625,7 +630,9 @@ export class DownloadService {
 
     emitDownloadStatsUpdated(stats);
 
-    return { success: successCount, failed: failedCount, failures };
+    return {
+      success: successCount, failed: failedCount, failures 
+    };
   }
 
   /**

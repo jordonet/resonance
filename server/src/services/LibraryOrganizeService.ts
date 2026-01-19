@@ -157,11 +157,9 @@ export class LibraryOrganizeService {
     }
 
     const where: Record<string, unknown> = {
-      status:      'completed',
-      organizedAt: null,
-      slskdDirectory: {
-        [Op.ne]: null,
-      },
+      status:         'completed',
+      organizedAt:    null,
+      slskdDirectory: { [Op.ne]: null },
     };
 
     const tasks = await DownloadTask.findAll({
@@ -192,7 +190,7 @@ export class LibraryOrganizeService {
     const [items, total] = await Promise.all([
       DownloadTask.findAll({
         where,
-        order:  [['completedAt', 'ASC']],
+        order: [['completedAt', 'ASC']],
         limit,
         offset,
       }),
