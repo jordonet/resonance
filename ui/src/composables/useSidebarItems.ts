@@ -44,6 +44,13 @@ export const useSidebarItems = () => {
         icon:  'pi-cloud-download',
         badge: stats.value?.activeDownloads ?? undefined,
       },
+      {
+        key:   ROUTE_NAMES.LIBRARY,
+        label: 'Library',
+        to:    ROUTE_PATHS.LIBRARY,
+        icon:  'pi-folder-open',
+        badge: stats.value?.unorganized ?? undefined,
+      },
     ];
   });
 

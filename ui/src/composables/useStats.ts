@@ -3,12 +3,14 @@ import type { QueueStats } from '@/services/queue';
 import { ref, computed, watch } from 'vue';
 import * as queueApi from '@/services/queue';
 import * as downloadsApi from '@/services/downloads';
+import * as libraryApi from '@/services/library';
 import { useQueueStore } from '@/stores/queue';
 import { useDownloadsStore } from '@/stores/downloads';
 import { useAuthStore } from '@/stores/auth';
 
 interface CombinedStats extends QueueStats {
   activeDownloads?: number;
+  unorganized?:     number;
 }
 
 export function useStats() {
@@ -26,6 +28,7 @@ export function useStats() {
   });
   const loading = ref(false);
   const error = ref<string | null>(null);
+  const libraryUnorganized = ref(0);
 
   const initialized = ref(false);
 
@@ -35,6 +38,7 @@ export function useStats() {
     ...apiStats.value,
     pending:         initialized.value ? queueStore.total : apiStats.value.pending,
     activeDownloads: downloadsStore.stats?.active ?? downloadsStore.activeTotal,
+    unorganized:     libraryUnorganized.value,
   }));
 
   async function fetchStats() {
@@ -45,9 +49,10 @@ export function useStats() {
     loading.value = true;
     error.value = null;
     try {
-      const [queueStats, downloadStats] = await Promise.all([
+      const [queueStats, downloadStats, libraryStatus] = await Promise.all([
         queueApi.getStats(),
         downloadsApi.getStats().catch(() => null),
+        libraryApi.getOrganizeStatus().catch(() => null),
       ]);
 
       apiStats.value = queueStats;
@@ -57,6 +62,10 @@ export function useStats() {
 
       if (downloadStats) {
         downloadsStore.stats = downloadStats;
+      }
+
+      if (libraryStatus) {
+        libraryUnorganized.value = libraryStatus.unorganized;
       }
 
       initialized.value = true;
@@ -82,6 +91,7 @@ export function useStats() {
           approvedToday:  0,
           totalProcessed: 0,
         };
+        libraryUnorganized.value = 0;
 
         return;
       }

@@ -3,3 +3,4 @@ export * from './queue';
 export * from './api';
 export * from './auth';
 export * from './downloads';
+export * from './library';
