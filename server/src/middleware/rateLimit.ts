@@ -17,7 +17,7 @@ const cache = new LRUCache<string, number[]>({
  */
 export function rateLimit(config: RateLimitConfig) {
   return (req: Request, res: Response, next: NextFunction): void => {
-    const key = req.ip || 'unknown';
+    const key = (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() || req.ip || 'unknown';
     const now = Date.now();
     const timestamps = cache.get(key) || [];
     const windowStart = now - config.windowMs;

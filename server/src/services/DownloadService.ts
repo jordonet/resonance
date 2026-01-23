@@ -106,7 +106,7 @@ export class DownloadService {
 
       if (syncResult.activeSetChanged) {
         ({ rows, count } = await DownloadTask.findAndCountAll({
-          where: { status: { [Op.in]: ['pending', 'searching', 'queued', 'downloading', 'deferred'] } },
+          where: { status: { [Op.in]: ['pending', 'searching', 'pending_selection', 'queued', 'downloading', 'deferred'] } },
           order: [['queuedAt', 'DESC']],
           limit,
           offset,
