@@ -1,6 +1,7 @@
 import type { CreateWishlistItemOptions, ProcessApprovedItem } from '@server/types/wishlist';
 
 import logger from '@server/config/logger';
+import { withDbWrite } from '@server/config/db';
 import WishlistItem, { WishlistItemSource, WishlistItemType } from '@server/models/WishlistItem';
 
 /**
@@ -70,10 +71,10 @@ export class WishlistService {
    * Mark a wishlist item as processed (download task created)
    */
   async markProcessed(id: string): Promise<void> {
-    await WishlistItem.update(
+    await withDbWrite(() => WishlistItem.update(
       { processedAt: new Date() },
       { where: { id } }
-    );
+    ));
     logger.debug(`Marked wishlist item ${ id } as processed`);
   }
 
@@ -95,7 +96,7 @@ export class WishlistService {
       return existing;
     }
 
-    const wishlistItem = await WishlistItem.create({
+    const wishlistItem = await withDbWrite(() => WishlistItem.create({
       artist,
       album,
       type,
@@ -104,7 +105,7 @@ export class WishlistService {
       source:   source ?? 'manual',
       coverUrl,
       addedAt:  new Date(),
-    });
+    }));
 
     logger.info(`Added to wishlist: ${ artist } - ${ album }`);
 
@@ -155,7 +156,7 @@ export class WishlistService {
         continue;
       }
 
-      await WishlistItem.create({
+      await withDbWrite(() => WishlistItem.create({
         artist,
         album,
         type,
@@ -164,7 +165,7 @@ export class WishlistService {
         source:   (item.source as WishlistItemSource) ?? 'manual',
         coverUrl: item.coverUrl,
         addedAt:  new Date(),
-      });
+      }));
 
       count++;
       logger.info(`Added to wishlist: ${ artist } - ${ album }`);
@@ -192,12 +193,12 @@ export class WishlistService {
    * Returns true if entry was found and removed.
    */
   async remove(artist: string, album: string): Promise<boolean> {
-    const deleted = await WishlistItem.destroy({
+    const deleted = await withDbWrite(() => WishlistItem.destroy({
       where: {
         artist,
         album,
       },
-    });
+    }));
 
     if (deleted > 0) {
       logger.info(`Removed from wishlist: ${ artist } - ${ album }`);
@@ -219,7 +220,7 @@ export class WishlistService {
       return false;
     }
 
-    await item.destroy();
+    await withDbWrite(() => item.destroy());
     logger.info(`Removed from wishlist: ${ item.artist } - ${ item.album }`);
 
     return true;
