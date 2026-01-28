@@ -27,6 +27,7 @@
     "@sequelize/core": "7.0.0-alpha.47",
     "@sequelize/sqlite3": "7.0.0-alpha.47",
     "@sequelize/utils": "7.0.0-alpha.47",
+    "async-mutex": "^0.5.0",
     "axios": "^1.13.2",
     "cors": "^2.8.5",
     "express": "^5.2.1",
