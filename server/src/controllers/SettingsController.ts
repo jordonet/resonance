@@ -13,6 +13,7 @@ import {
   updateConfig,
   sanitizeConfigForApi,
   sanitizeSectionForApi,
+  SECTION_SCHEMAS,
 } from '@server/config/settings';
 import {
   SETTINGS_SECTIONS,
@@ -135,14 +136,24 @@ class SettingsController extends BaseController {
         return sendValidationError(res, 'Request body must include a data object');
       }
 
-      // For now, just confirm the section data is structurally valid
-      // Full validation happens on save via updateConfig
-      const response: ValidateResponse = {
-        valid:  true,
-        errors: undefined,
-      };
+      const schema = SECTION_SCHEMAS[section];
 
-      return res.json(response);
+      if (!schema) {
+        return sendValidationError(res, `No validation schema for section: ${ section }`);
+      }
+
+      const result = schema.safeParse(data);
+
+      if (!result.success) {
+        const errors = result.error.issues.map((issue) => ({
+          path:    issue.path.join('.'),
+          message: issue.message,
+        }));
+
+        return res.json({ valid: false, errors } as ValidateResponse);
+      }
+
+      return res.json({ valid: true, errors: undefined } as ValidateResponse);
     } catch(error) {
       return this.handleError(res, error as Error, 'Failed to validate settings');
     }

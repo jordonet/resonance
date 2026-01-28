@@ -3,7 +3,11 @@ import path from 'path';
 import yaml from 'js-yaml';
 import { z } from 'zod';
 
+import { Mutex } from 'async-mutex';
+
 import { DEFAULT_PREFERRED_FORMATS } from '@server/constants/slskd';
+
+const configMutex = new Mutex();
 
 /**
  * Zod schemas for configuration validation
@@ -373,34 +377,40 @@ export function clearConfigCache(): void {
   cachedConfig = null;
 }
 
+/**
+ * Update a specific section of the configuration.
+ * To clear a secret, set its value to `null` (e.g., { token: null }).
+ */
 export async function updateConfig(section: string, updates: Record<string, unknown>): Promise<void> {
-  const configPath = resolveConfigPath();
-  let rawConfig: Record<string, unknown> = {};
+  await configMutex.runExclusive(async() => {
+    const configPath = resolveConfigPath();
+    let rawConfig: Record<string, unknown> = {};
 
-  if (fs.existsSync(configPath)) {
-    const fileContent = await fs.promises.readFile(configPath, 'utf-8');
+    if (fs.existsSync(configPath)) {
+      const fileContent = await fs.promises.readFile(configPath, 'utf-8');
 
-    rawConfig = yaml.load(fileContent) as Record<string, unknown> || {};
-  }
+      rawConfig = yaml.load(fileContent) as Record<string, unknown> || {};
+    }
 
-  const currentSection = rawConfig[section];
-  const nextSection = deepMerge(isPlainObject(currentSection) ? currentSection : {}, updates);
+    const currentSection = rawConfig[section];
+    const nextSection = deepMerge(isPlainObject(currentSection) ? currentSection : {}, updates);
 
-  rawConfig[section] = nextSection;
+    rawConfig[section] = nextSection;
 
-  const mergedConfig = deepMerge(DEFAULT_CONFIG, rawConfig);
-  const result = ConfigSchema.safeParse(mergedConfig);
+    const mergedConfig = deepMerge(DEFAULT_CONFIG, rawConfig);
+    const result = ConfigSchema.safeParse(mergedConfig);
 
-  if (!result.success) {
-    const errors = result.error.issues.map((issue) => `  ${ issue.path.join('.') }: ${ issue.message }`).join('\n');
+    if (!result.success) {
+      const errors = result.error.issues.map((issue) => `  ${ issue.path.join('.') }: ${ issue.message }`).join('\n');
 
-    throw new Error(`Invalid configuration:\n${ errors }`);
-  }
+      throw new Error(`Invalid configuration:\n${ errors }`);
+    }
 
-  const output = yaml.dump(rawConfig, { noRefs: true, lineWidth: 120 });
+    const output = yaml.dump(rawConfig, { noRefs: true, lineWidth: 120 });
 
-  await fs.promises.writeFile(configPath, output, 'utf-8');
-  clearConfigCache();
+    await fs.promises.writeFile(configPath, output, 'utf-8');
+    clearConfigCache();
+  });
 }
 
 /**
@@ -447,6 +457,7 @@ function applyEnvOverrides(config: Record<string, unknown>): Record<string, unkn
 
 /**
  * Deep merge two objects. Source values override target values.
+ * Setting a value to `null` removes the key from the result.
  */
 function deepMerge(target: Record<string, unknown>, source: Record<string, unknown>): Record<string, unknown> {
   const result: Record<string, unknown> = { ...target };
@@ -455,7 +466,9 @@ function deepMerge(target: Record<string, unknown>, source: Record<string, unkno
     const sourceValue = source[key];
     const targetValue = result[key];
 
-    if (isPlainObject(sourceValue) && isPlainObject(targetValue)) {
+    if (sourceValue === null) {
+      delete result[key];
+    } else if (isPlainObject(sourceValue) && isPlainObject(targetValue)) {
       result[key] = deepMerge(targetValue as Record<string, unknown>, sourceValue as Record<string, unknown>);
     } else if (sourceValue !== undefined) {
       result[key] = sourceValue;
@@ -602,3 +615,16 @@ function getNestedValue(obj: Record<string, unknown>, path: string[]): unknown {
 
   return current;
 }
+
+/**
+ * Section schemas for validation endpoint
+ */
+export const SECTION_SCHEMAS: Record<string, z.ZodType<unknown>> = {
+  listenbrainz:      ListenBrainzSettingsSchema,
+  slskd:             SlskdSettingsSchema,
+  catalog_discovery: CatalogDiscoverySettingsSchema,
+  library_duplicate: LibraryDuplicateSettingsSchema,
+  library_organize:  LibraryOrganizeSettingsSchema,
+  preview:           PreviewSettingsSchema,
+  ui:                UISettingsSchema,
+};

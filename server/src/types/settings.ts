@@ -25,17 +25,6 @@ export type SettingsSection = typeof SETTINGS_SECTIONS[number];
 export const SettingsSectionSchema = z.enum(SETTINGS_SECTIONS);
 
 /**
- * Fields that contain secrets (should be sanitized in API responses)
- */
-export const SECRET_FIELDS: Record<string, string[]> = {
-  listenbrainz:      ['token'],
-  slskd:             ['api_key'],
-  catalog_discovery: ['navidrome.password', 'lastfm.api_key'],
-  preview:           ['spotify.client_id', 'spotify.client_secret'],
-  ui:                ['auth.password', 'auth.api_key'],
-};
-
-/**
  * API response schemas (secrets replaced with configured status)
  */
 
