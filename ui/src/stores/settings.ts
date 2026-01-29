@@ -14,6 +14,8 @@ import { DEFAULT_UI_PREFERENCES } from '@/types/settings';
 const UI_PREFS_KEY = 'resonance_ui_prefs';
 
 export const useSettingsStore = defineStore('settings', () => {
+  const { showSuccess, showError } = useToast();
+
   const settings = ref<SettingsResponse | null>(null);
   const loading = ref(false);
   const saving = ref(false);
@@ -53,6 +55,8 @@ export const useSettingsStore = defineStore('settings', () => {
   function saveUIPreferences(prefs: Partial<UIPreferences>) {
     uiPreferences.value = { ...uiPreferences.value, ...prefs };
     localStorage.setItem(UI_PREFS_KEY, JSON.stringify(uiPreferences.value));
+
+    showSuccess('UI preferences saved');
   }
 
   /**
@@ -66,7 +70,7 @@ export const useSettingsStore = defineStore('settings', () => {
       settings.value = await settingsApi.getAll();
     } catch(e) {
       error.value = e instanceof Error ? e.message : 'Failed to fetch settings';
-      useToast().showError('Failed to load settings');
+      showError('Failed to load settings');
     } finally {
       loading.value = false;
     }
@@ -84,7 +88,7 @@ export const useSettingsStore = defineStore('settings', () => {
 
     try {
       await settingsApi.updateSection(section, data);
-      useToast().showSuccess('Settings saved');
+      showSuccess('Settings saved');
 
       // Refresh settings to get updated values
       await fetchSettings();
@@ -94,7 +98,7 @@ export const useSettingsStore = defineStore('settings', () => {
       const message = e instanceof Error ? e.message : 'Failed to save settings';
 
       error.value = message;
-      useToast().showError(message);
+      showError(message);
 
       return false;
     } finally {
