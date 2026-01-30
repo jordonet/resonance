@@ -5,7 +5,7 @@
 
 **Discover music from your listening habits, preview before downloading, auto-fetch via Soulseek.**
 
-https://github.com/user-attachments/assets/02b63e79-9aeb-4492-9472-4ee064b99bed
+https://github.com/user-attachments/assets/8e33838e-a73d-4489-9b72-44cdd9ec8d99
 
 ## Features
 
