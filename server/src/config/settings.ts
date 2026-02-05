@@ -36,20 +36,20 @@ const AuthSettingsSchema = z.object({
   if (value.type === 'basic') {
     if (!value.username) {
       ctx.addIssue({
-        code: 'custom', message: 'Required when ui.auth.type is basic', path: ['username'] 
+        code: 'custom', message: 'Required when ui.auth.type is basic', path: ['username']
       });
     }
 
     if (!value.password) {
       ctx.addIssue({
-        code: 'custom', message: 'Required when ui.auth.type is basic', path: ['password'] 
+        code: 'custom', message: 'Required when ui.auth.type is basic', path: ['password']
       });
     }
   }
 
   if (value.type === 'api_key' && !value.api_key) {
     ctx.addIssue({
-      code: 'custom', message: 'Required when ui.auth.type is api_key', path: ['api_key'] 
+      code: 'custom', message: 'Required when ui.auth.type is api_key', path: ['api_key']
     });
   }
 });
@@ -195,6 +195,7 @@ const CatalogDiscoverySettingsSchema = z.object({
   navidrome:            NavidromeSettingsSchema.optional(),
   lastfm:               LastFmSettingsSchema.optional(),
   listenbrainz:         CatalogListenBrainzSettingsSchema.optional(),
+  provider_timeout_ms:  z.number().int().positive().optional(),
   max_artists_per_run:  z.number().int().positive(),
   min_similarity:       z.number().min(0).max(1),
   similar_artist_limit: z.number().int().positive().optional(),

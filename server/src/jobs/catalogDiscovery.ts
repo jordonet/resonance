@@ -61,7 +61,7 @@ export async function catalogDiscoveryJob(): Promise<void> {
     providers.push(new LastFmSimilarityProvider(catalogConfig.lastfm.api_key));
   }
 
-  if (catalogConfig.listenbrainz?.enabled !== false && catalogConfig.listenbrainz) {
+  if (catalogConfig.listenbrainz?.enabled) {
     providers.push(new ListenBrainzSimilarityProvider());
   }
 
@@ -114,6 +114,7 @@ export async function catalogDiscoveryJob(): Promise<void> {
     logger.info('Fetching similar artists from providers...');
     const similarArtistMap = new Map<string, SimilarArtistScore>();
     const similarArtistLimit = catalogConfig.similar_artist_limit || 10;
+    const providerTimeout = catalogConfig.provider_timeout_ms || 10000;
     let processedCount = 0;
 
     for (const [_nameLower, artist] of Object.entries(libraryArtists)) { // eslint-disable-line
@@ -135,7 +136,8 @@ export async function catalogDiscoveryJob(): Promise<void> {
         providers,
         artist.name,
         undefined,
-        similarArtistLimit
+        similarArtistLimit,
+        providerTimeout
       );
 
       for (const sim of results) {
@@ -304,8 +306,9 @@ export async function catalogDiscoveryJob(): Promise<void> {
 
 /**
  * Fetch similar artists from all providers in parallel with timeout.
+ * Exported for testing.
  */
-async function fetchSimilarFromAllProviders(
+export async function fetchSimilarFromAllProviders(
   providers: SimilarityProvider[],
   artistName: string,
   artistMbid: string | undefined,

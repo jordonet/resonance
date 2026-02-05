@@ -4,6 +4,8 @@ import { ListenBrainzClient } from '@server/services/clients/ListenBrainzClient'
 import { MusicBrainzClient } from '@server/services/clients/MusicBrainzClient';
 import logger from '@server/config/logger';
 
+// TODO: the mbidCache grows indefinitely we should consider a size limit and evict old entries.
+
 /**
  * ListenBrainz similarity provider.
  * Uses ListenBrainz Labs API for similar artists.
