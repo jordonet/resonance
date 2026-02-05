@@ -1,4 +1,6 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import {
+  describe, it, expect, vi, beforeEach, afterEach 
+} from 'vitest';
 
 import type { SimilarArtistResult, SimilarityProvider } from '@server/types/similarity';
 
@@ -8,11 +10,11 @@ import { fetchSimilarFromAllProviders } from './catalogDiscovery';
  * Mock provider for testing
  */
 class MockProvider implements SimilarityProvider {
-  name: string;
-  private results: SimilarArtistResult[];
-  private shouldThrow: boolean;
+  name:                 string;
+  private results:      SimilarArtistResult[];
+  private shouldThrow:  boolean;
   private errorMessage: string;
-  private delayMs: number;
+  private delayMs:      number;
 
   constructor(
     name: string,
