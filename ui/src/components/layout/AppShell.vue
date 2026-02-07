@@ -584,6 +584,7 @@ watch(
 
     &__sidebar.sidebar-open {
       transform: translateX(0);
+      background-color: var(--p-content-background);
     }
 
     &__mobile-toggle {
@@ -592,6 +593,7 @@ watch(
 
     &__content {
       border-top-left-radius: 0;
+      padding: .25rem;
     }
 
     &__collapse-toggle {

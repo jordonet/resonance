@@ -19,7 +19,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), { focusIndex: -1 });
-const { isMobile } = useBreakpoint();
+const { isMobile } = useBreakpoint(1280);
 
 const emit = defineEmits<{
   approve:              [mbids: string[]];

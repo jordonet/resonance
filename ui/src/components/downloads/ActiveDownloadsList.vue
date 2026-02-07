@@ -30,7 +30,7 @@ const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
 const { triggerDownloader } = useJobs();
 const confirm = useConfirm();
-const { isMobile } = useBreakpoint();
+const { isMobile } = useBreakpoint(1320);
 
 const selectedDownloads = ref<ActiveDownload[]>([]);
 
