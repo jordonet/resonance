@@ -2,6 +2,7 @@
 import type { FailedDownload } from '@/types';
 
 import { ref } from 'vue';
+import { useConfirm } from 'primevue/useconfirm';
 import { formatRelativeTime } from '@/utils/formatters';
 
 import DataTable from 'primevue/datatable';
@@ -22,6 +23,7 @@ interface Emits {
 
 defineProps<Props>();
 const emit = defineEmits<Emits>();
+const confirm = useConfirm();
 
 const selectedDownloads = ref<FailedDownload[]>([]);
 
@@ -38,8 +40,15 @@ const handleDelete = () => {
   const ids = selectedDownloads.value.map((d) => d.id);
 
   if (ids.length) {
-    emit('delete', ids);
-    selectedDownloads.value = [];
+    confirm.require({
+      message: `Delete ${ids.length} selected download(s)?`,
+      header:  'Confirm Delete',
+      icon:    'pi pi-exclamation-triangle',
+      accept:  () => {
+        emit('delete', ids);
+        selectedDownloads.value = [];
+      },
+    });
   }
 };
 </script>
@@ -123,7 +132,12 @@ const handleDelete = () => {
               severity="danger"
               size="small"
               outlined
-              @click="emit('delete', [data.id])"
+              @click="confirm.require({
+                message: `Delete failed download for ${data.artist} - ${data.album}?`,
+                header: 'Confirm Delete',
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => emit('delete', [data.id]),
+              })"
             />
           </div>
         </template>
