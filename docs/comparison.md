@@ -2,17 +2,19 @@
 
 This document compares Resonance to similar self-hosted music discovery and automation tools. The goal is to help newcomers understand where Resonance fits in the ecosystem and what makes it distinct.
 
+Resonance's design philosophy is the **digital record shop**: you browse curated crates shaped by your listening history and existing collection, preview what catches your ear, and decide what to take home. Other tools in this space optimize for automation; Resonance optimizes for intentional discovery.
+
 ## Quick Comparison
 
-| Feature | Resonance | Explo | Lidarr | Lidify | Soularr | Beets |
-|---|---|---|---|---|---|---|
-| **Primary purpose** | Discovery pipeline with curation | Automated playlist generation | Collection management | Music server + discovery | Lidarr-to-Soulseek bridge | Library organization |
-| **Discovery source** | ListenBrainz + Last.fm catalog | ListenBrainz | Manual artist monitoring | Last.fm similar artists | None (uses Lidarr wants) | None |
-| **Download sources** | Soulseek (slskd) | YouTube + Soulseek | Usenet + BitTorrent | N/A (uses Lidarr) | Soulseek (slskd) | None (import only) |
-| **Approval workflow** | ✅ Manual/auto queue with Web UI | ❌ Fully automated | ❌ Automated per-artist rules | ❌ N/A | ❌ Fully automated | N/A |
-| **Audio previews** | ✅ 30s previews (Deezer/Spotify) | ❌ | ❌ | ❌ | ❌ | ❌ |
-| **Web UI** | ✅ Dashboard, queue, downloads | ❌ CLI/headless only | ✅ Full management UI | ✅ Full player UI | ❌ CLI/headless | ⚠️ Basic optional |
-| **Music server support** | Subsonic-compatible servers | Jellyfin, Emby, Plex, MPD, Subsonic | Standalone | Standalone (is a server) | Via Lidarr | None (organizer) |
+| Feature | Resonance | Explo | SoulSync | Lidarr | Lidify | Soularr | Beets |
+|---|---|---|---|---|---|---|---|
+| **Primary purpose** | Discovery pipeline with curation | Automated playlist generation | All-in-one automation platform | Collection management | Music server + discovery | Lidarr-to-Soulseek bridge | Library organization |
+| **Discovery source** | ListenBrainz + Last.fm catalog | ListenBrainz | Spotify + music-map.com + Beatport | Manual artist monitoring | Last.fm similar artists | None (uses Lidarr wants) | None |
+| **Download sources** | Soulseek (slskd) | YouTube + Soulseek | Soulseek + YouTube + Beatport | Usenet + BitTorrent | N/A (uses Lidarr) | Soulseek (slskd) | None (import only) |
+| **Approval workflow** | Manual/auto queue with Web UI | Fully automated | Fully automated | Automated per-artist rules | N/A | Fully automated | N/A |
+| **Audio previews** | 30s previews (Deezer/Spotify) | None | None | None | None | N/A | N/A |
+| **Web UI** | Dashboard, queue, downloads | CLI/headless only | Full management UI | Full management UI | Full player UI | CLI/headless |  Basic optional |
+| **Music server support** | Subsonic-compatible servers | Jellyfin, Emby, Plex, MPD, Subsonic | Plex, Jellyfin, Navidrome | Standalone | Standalone (is a server) | Via Lidarr | None (organizer) |
 
 ## Resonance vs Explo
 
@@ -45,6 +47,40 @@ Both tools solve the same core problem: turning ListenBrainz listening data into
 **Simpler setup for passive discovery.** If you want a fully automated "just give me new music every week" experience without any manual intervention, Explo's simplicity is a strength. Resonance's approval workflow is powerful but requires engagement.
 
 **More mature.** Explo has been around longer and has a larger community, which translates to more battle-tested edge cases.
+
+## Resonance vs SoulSync
+
+[SoulSync](https://github.com/Nezreka/SoulSync) is an all-in-one music automation platform that combines discovery, downloading, playlist generation, metadata tagging, and library management into a single application. It's the most feature-rich tool in this space.
+
+### Where they overlap
+
+Both tools discover music and download via slskd, both offer web UIs for managing the pipeline, both do duplicate detection against your existing library, and both target the self-hosted music community.
+
+### Where Resonance differs
+
+**Curation vs automation.** This is the fundamental split. SoulSync's tagline is "zero manual effort", it automates the entire chain from discovery to organized files. Resonance puts human judgment at the center: you browse, preview, and approve before anything downloads. If you care about intentionally building a library rather than accumulating tracks, the approval workflow matters.
+
+**No Spotify dependency.** SoulSync's richest discovery features (Discovery Weekly, personalized playlists, metadata) depend on Spotify's API, falling back to iTunes when unavailable. Resonance uses ListenBrainz and Last.fm exclusively, open services with no proprietary API dependency.
+
+**Album-oriented workflow.** Resonance resolves track-level recommendations to their parent albums via MusicBrainz, presenting albums as the unit of approval. SoulSync is track-oriented, generating playlists of individual songs. This reflects different philosophies about how a library should grow.
+
+**Catalog discovery.** Resonance scans your Subsonic library and queries ListenBrainz and Last.fm for artists similar to ones you already own, aggregating similarity scores across your collection. This means an artist similar to *multiple* artists you own ranks higher. SoulSync uses music-map.com for similar artist lookups from a watchlist, which doesn't weight against your full library.
+
+**Focused scope.** Resonance deliberately delegates post-download work (tagging, organizing, metadata) to specialized tools like beets or wrtag. SoulSync handles tagging, LRC lyrics, file organization templates, quality scanning, and duplicate cleaning itself. Resonance's restraint keeps the codebase lean and composable with existing toolchains.
+
+### Where SoulSync has advantages
+
+**Broader download sources.** SoulSync downloads from Soulseek, YouTube (via yt-dlp), and Beatport charts. Resonance currently only supports slskd.
+
+**Playlist generation.** SoulSync generates 12+ playlist types: Release Radar, Discovery Weekly, seasonal playlists, decade/genre mixes, daily mixes, and more. Resonance doesn't generate playlists, its output is approved albums in your library.
+
+**Artist monitoring.** SoulSync includes a watchlist for monitoring artists and auto-detecting new releases, similar to Lidarr. Resonance focuses on discovering new-to-you artists rather than tracking known ones.
+
+**Built-in library management.** Quality scanning (find low-bitrate files), duplicate cleaning, album completion tracking, and template-based file organization are all built in. Resonance expects you to use other tools for these tasks.
+
+**Broader server support.** SoulSync syncs with Plex, Jellyfin, and Navidrome. Resonance integrates with Subsonic-compatible servers only.
+
+**Metadata enrichment.** SoulSync fetches synchronized lyrics (LRC), album art, and proper tags automatically. Resonance delegates metadata work to external tools.
 
 ## Resonance vs Lidarr
 
@@ -104,6 +140,7 @@ Resonance is the right choice if you:
 
 ## When to choose something else
 
+- If you want an **all-in-one automation platform** that handles discovery, downloading, tagging, organizing, and playlist generation -> **SoulSync**
 - If you want **fully automated, zero-interaction** weekly playlists -> **Explo**
 - If you need to **manage and monitor known artists** for new releases -> **Lidarr**
 - If you want a **full music server replacement** with built-in discovery -> **Lidify**
