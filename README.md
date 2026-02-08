@@ -4,7 +4,7 @@
 [![Docker](https://img.shields.io/badge/docker-ghcr.io%2Fjordojordo%2Fresonance-blue)](https://ghcr.io/jordojordo/resonance)
 [![AI Assisted](https://img.shields.io/badge/AI-Claude_Code-D97757?logo=claude&logoColor=fff)](https://claude.ai/code)
 
-**Curated music discovery for your self-hosted library.** Resonance finds new music through your listening history and existing collection, lets you preview and approve recommendations, then downloads via Soulseek.
+**A digital record shop for your self-hosted library.** Resonance surfaces music through your listening history and existing collection, lets you preview and approve recommendations, then downloads via Soulseek.
 
 https://github.com/user-attachments/assets/8e33838e-a73d-4489-9b72-44cdd9ec8d99
 
@@ -22,7 +22,7 @@ https://github.com/user-attachments/assets/8e33838e-a73d-4489-9b72-44cdd9ec8d99
 
 **Acquire**
 - **Automatic Soulseek downloads**: Integrates with slskd for P2P fetching
-- **Library-aware duplicate detection**: Checks existing library to avoid re-downloading
+- **Duplicate detection**: Checks existing library to avoid re-downloading
 - **Single Docker container**: Everything runs in one image
 
 ```mermaid
