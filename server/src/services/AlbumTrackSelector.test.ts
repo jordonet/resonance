@@ -1,7 +1,9 @@
 import {
-  describe, it, expect, beforeEach, afterEach, vi 
+  describe, it, expect, beforeEach, afterEach, vi
 } from 'vitest';
 import nock from 'nock';
+
+import { DEEZER_BASE_URL } from '@server/constants/clients';
 
 // Mock the config module before importing AlbumTrackSelector
 vi.mock('@server/config/settings', () => ({
@@ -60,26 +62,26 @@ describe('AlbumTrackSelector', () => {
 
     it('selects track from Deezer when sourceTrack not provided', async() => {
       // Mock Deezer album search
-      nock('https://api.deezer.com')
+      nock(DEEZER_BASE_URL)
         .get('/search/album')
         .query({ q: 'artist:"Dream Theater" album:"Images and Words"' })
         .reply(200, {
           data:  [{
-            id: 12345, title: 'Images and Words', artist: { id: 1, name: 'Dream Theater' } 
+            id: 12345, title: 'Images and Words', artist: { id: 1, name: 'Dream Theater' }
           }],
           total: 1,
         });
 
       // Mock Deezer album tracks
-      nock('https://api.deezer.com')
+      nock(DEEZER_BASE_URL)
         .get('/album/12345/tracks')
         .reply(200, {
           data: [
             {
-              id: 1, title: 'Pull Me Under', preview: 'https://deezer.com/preview/1', artist: { id: 1, name: 'Dream Theater' }, duration: 300, track_position: 1 
+              id: 1, title: 'Pull Me Under', preview: 'https://deezer.com/preview/1', artist: { id: 1, name: 'Dream Theater' }, duration: 300, track_position: 1
             },
             {
-              id: 2, title: 'Another Day', preview: 'https://deezer.com/preview/2', artist: { id: 1, name: 'Dream Theater' }, duration: 240, track_position: 2 
+              id: 2, title: 'Another Day', preview: 'https://deezer.com/preview/2', artist: { id: 1, name: 'Dream Theater' }, duration: 240, track_position: 2
             },
           ],
           total: 2,
@@ -99,12 +101,12 @@ describe('AlbumTrackSelector', () => {
 
     it('falls back to MusicBrainz when Deezer fails', async() => {
       // Mock Deezer album search - not found
-      nock('https://api.deezer.com')
+      nock(DEEZER_BASE_URL)
         .get('/search/album')
         .query({ q: 'artist:"Obscure Artist" album:"Rare Album"' })
         .reply(200, { data: [], total: 0 });
 
-      nock('https://api.deezer.com')
+      nock(DEEZER_BASE_URL)
         .get('/search/album')
         .query({ q: 'Obscure Artist Rare Album' })
         .reply(200, { data: [], total: 0 });
@@ -145,12 +147,12 @@ describe('AlbumTrackSelector', () => {
 
     it('returns null when no track is found', async() => {
       // Mock Deezer album search - not found
-      nock('https://api.deezer.com')
+      nock(DEEZER_BASE_URL)
         .get('/search/album')
         .query({ q: 'artist:"Unknown Artist" album:"Unknown Album"' })
         .reply(200, { data: [], total: 0 });
 
-      nock('https://api.deezer.com')
+      nock(DEEZER_BASE_URL)
         .get('/search/album')
         .query({ q: 'Unknown Artist Unknown Album' })
         .reply(200, { data: [], total: 0 });
@@ -165,23 +167,23 @@ describe('AlbumTrackSelector', () => {
 
     it('caches results', async() => {
       // Mock Deezer album search
-      const deezerScope = nock('https://api.deezer.com')
+      const deezerScope = nock(DEEZER_BASE_URL)
         .get('/search/album')
         .query({ q: 'artist:"Cached Artist" album:"Cached Album"' })
         .reply(200, {
           data:  [{
-            id: 99999, title: 'Cached Album', artist: { id: 1, name: 'Cached Artist' } 
+            id: 99999, title: 'Cached Album', artist: { id: 1, name: 'Cached Artist' }
           }],
           total: 1,
         });
 
       // Mock Deezer album tracks
-      const tracksScope = nock('https://api.deezer.com')
+      const tracksScope = nock(DEEZER_BASE_URL)
         .get('/album/99999/tracks')
         .reply(200, {
           data: [
             {
-              id: 1, title: 'Cached Track', preview: 'https://deezer.com/cached', artist: { id: 1, name: 'Cached Artist' }, duration: 200, track_position: 1 
+              id: 1, title: 'Cached Track', preview: 'https://deezer.com/cached', artist: { id: 1, name: 'Cached Artist' }, duration: 200, track_position: 1
             },
           ],
           total: 1,

@@ -2,6 +2,7 @@ import { describe, it, expect, afterEach } from 'vitest';
 import nock from 'nock';
 
 import { TrackCountService } from './TrackCountService';
+import { DEEZER_BASE_URL } from '@server/constants/clients';
 
 describe('TrackCountService', () => {
   const service = new TrackCountService();
@@ -14,7 +15,7 @@ describe('TrackCountService', () => {
     nock('https://musicbrainz.org')
       .get('/ws/2/release')
       .query({
-        'release-group': 'test-mbid', status: 'official', limit: '5', fmt: 'json' 
+        'release-group': 'test-mbid', status: 'official', limit: '5', fmt: 'json'
       })
       .reply(200, {
         releases: [
@@ -35,11 +36,11 @@ describe('TrackCountService', () => {
     nock('https://musicbrainz.org')
       .get('/ws/2/release')
       .query({
-        'release-group': 'bad-mbid', status: 'official', limit: '5', fmt: 'json' 
+        'release-group': 'bad-mbid', status: 'official', limit: '5', fmt: 'json'
       })
       .reply(200, { releases: [] });
 
-    nock('https://api.deezer.com')
+    nock(DEEZER_BASE_URL)
       .get('/search/album')
       .query({ q: 'artist:"Artist" album:"Album"' })
       .reply(200, { data: [{ id: 1, nb_tracks: 10 }] });
@@ -54,7 +55,7 @@ describe('TrackCountService', () => {
   });
 
   it('falls back to Deezer when no mbid is provided', async() => {
-    nock('https://api.deezer.com')
+    nock(DEEZER_BASE_URL)
       .get('/search/album')
       .query({ q: 'artist:"Artist" album:"Album"' })
       .reply(200, { data: [{ id: 1, nb_tracks: 8 }] });
@@ -71,16 +72,16 @@ describe('TrackCountService', () => {
     nock('https://musicbrainz.org')
       .get('/ws/2/release')
       .query({
-        'release-group': 'test-mbid', status: 'official', limit: '5', fmt: 'json' 
+        'release-group': 'test-mbid', status: 'official', limit: '5', fmt: 'json'
       })
       .reply(503);
 
-    nock('https://api.deezer.com')
+    nock(DEEZER_BASE_URL)
       .get('/search/album')
       .query({ q: 'artist:"Artist" album:"Album"' })
       .reply(200, { data: [] });
 
-    nock('https://api.deezer.com')
+    nock(DEEZER_BASE_URL)
       .get('/search/album')
       .query({ q: 'Artist Album' })
       .reply(200, { data: [] });
