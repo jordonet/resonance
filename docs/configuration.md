@@ -122,6 +122,17 @@ slskd:
       reject_low_quality: false   # Hard reject files below min_bitrate (vs just deprioritize)
       reject_lossless: false      # Hard reject lossless files (for users who only want lossy)
 
+    # Completeness scoring (optional)
+    # Score results based on track completeness using MusicBrainz/Deezer metadata
+    completeness:
+      enabled: true                 # Enable completeness scoring
+      require_complete: false       # Hard reject results with fewer tracks than expected
+      completeness_weight: 500      # Max score bonus for complete albums (0-1000)
+      min_completeness_ratio: 0.5   # Below this ratio, no completeness bonus (0.0-1.0)
+      file_count_cap: 200           # Max file count score points (0-1000)
+      penalize_excess: true         # Reduce score for more files than expected
+      excess_decay_rate: 2.0        # Penalty aggressiveness for excess files (0.0-10.0)
+
   # Interactive selection mode (optional)
   # Allows manual review and selection of search results before downloading
   selection:
@@ -382,6 +393,34 @@ Optional quality preferences configuration under `slskd.search.quality_preferenc
 When `reject_low_quality: true`, files in the "Low" tier are filtered out entirely. When `false`, they are just scored lower and deprioritized.
 
 When `reject_lossless: true`, lossless files (FLAC, WAV, ALAC, AIFF) are filtered out entirely. This is useful for users with limited storage who only want lossy formats.
+
+### slskd Completeness Scoring
+
+Optional completeness scoring configuration under `slskd.search.completeness`:
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| `enabled` | bool | `true` | Enable completeness scoring using MusicBrainz/Deezer track data |
+| `require_complete` | bool | `false` | Hard reject results with fewer tracks than expected |
+| `completeness_weight` | int | `500` | Max score bonus for complete albums (0-1000) |
+| `min_completeness_ratio` | float | `0.5` | Below this ratio, no completeness bonus is given (0.0-1.0) |
+| `file_count_cap` | int | `200` | Maximum file count score points (0-1000). When expected track count is known, this is the peak score awarded at an exact match; when unknown, it caps the fallback `fileCount * 10` formula |
+| `penalize_excess` | bool | `true` | Reduce score for results with more files than expected |
+| `excess_decay_rate` | float | `2.0` | How aggressively to penalize excess files (0.0-10.0) |
+
+**Scoring Algorithm:**
+
+The download scoring algorithm evaluates each search result and produces a `scorePercent` (0-100%) normalized from these components:
+
+- **Slot** (0-100): Bonus for peers with a free upload slot
+- **Quality** (0-1600): Based on audio format, bitrate, and lossless preference
+- **File count** (0-`file_count_cap`): Peaks at the expected track count, decays for excess files
+- **Upload speed** (0-100): Bonus capping at 1 MB/s
+- **Completeness** (0-`completeness_weight`): Proportional bonus based on how complete the album is
+
+When expected track count is unavailable (metadata lookup fails), scoring falls back to `file_count * 10` (capped at `file_count_cap`) with no completeness bonus. In this fallback mode, `file_count_cap` simply limits the raw file-count score; when expected track count *is* known, it instead serves as the peak score at an exact match, with decay applied for excess files.
+
+Track counts are resolved via MusicBrainz (primary, uses median of official releases) with Deezer as fallback.
 
 ### slskd Interactive Selection
 

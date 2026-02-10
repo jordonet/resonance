@@ -126,6 +126,17 @@ slskd:
       reject_low_quality: false   # Hard reject files below min_bitrate (vs just deprioritize)
       reject_lossless: false      # Hard reject lossless files (for users who only want lossy)
 
+    # Completeness scoring (optional)
+    # Score results based on track completeness using MusicBrainz/Deezer metadata
+    completeness:
+      enabled: true                 # Enable completeness scoring
+      require_complete: false       # Hard reject results with fewer tracks than expected
+      completeness_weight: 500      # Max score bonus for complete albums (0-1000)
+      min_completeness_ratio: 0.5   # Below this ratio, no completeness bonus (0.0-1.0)
+      file_count_cap: 200           # Max file count score points (0-1000)
+      penalize_excess: true         # Reduce score for more files than expected
+      excess_decay_rate: 2.0        # Penalty aggressiveness for excess files (0.0-10.0)
+
   # Interactive selection mode (optional)
   # Allows manual review and selection of search results before downloading
   selection:

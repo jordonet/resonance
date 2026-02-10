@@ -394,7 +394,17 @@ Get cached search results for a download task in `pending_selection` status.
         "uploadSpeed": 1200000,
         "files": [...]
       },
-      "score": 850,
+      "score": 1450,
+      "scorePercent": 78,
+      "scoreBreakdown": {
+        "hasSlot": 100,
+        "qualityScore": 650,
+        "fileCountScore": 200,
+        "uploadSpeedBonus": 50,
+        "completenessScore": 450
+      },
+      "expectedTrackCount": 12,
+      "completenessRatio": 1.0,
       "musicFileCount": 12,
       "totalSize": 450000000,
       "qualityInfo": {
@@ -416,6 +426,20 @@ Get cached search results for a download task in `pending_selection` status.
   "skippedUsernames": []
 }
 ```
+
+**Scoring Fields:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `scorePercent` | int | Score as percentage of theoretical maximum (0-100) |
+| `scoreBreakdown` | object | Detailed breakdown of score components |
+| `scoreBreakdown.hasSlot` | int | Bonus for free upload slot (0 or 100) |
+| `scoreBreakdown.qualityScore` | int | Audio quality score |
+| `scoreBreakdown.fileCountScore` | int | File count score (peaks at expected track count) |
+| `scoreBreakdown.uploadSpeedBonus` | int | Upload speed bonus (0-100) |
+| `scoreBreakdown.completenessScore` | int | Completeness bonus (0-`completeness_weight`) |
+| `expectedTrackCount` | int? | Expected tracks from MusicBrainz/Deezer (null if unavailable) |
+| `completenessRatio` | float? | Ratio of actual files to expected tracks (null if unavailable) |
 
 #### POST /api/v1/downloads/:id/select
 

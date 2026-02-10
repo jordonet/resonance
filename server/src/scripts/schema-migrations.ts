@@ -134,6 +134,26 @@ const COLUMN_MIGRATIONS: ColumnMigration[] = [
       allowNull: true,
     },
   },
+  // Track count infrastructure for completeness scoring.
+  // No manual backfill is needed for existing tasks: slskdDownloader checks
+  // `expectedTrackCount == null` on each processing cycle and resolves track
+  // counts automatically via MusicBrainz/Deezer before scoring.
+  {
+    table:      'download_tasks',
+    column:     'mbid',
+    definition: {
+      type:      DataTypes.STRING(255),
+      allowNull: true,
+    },
+  },
+  {
+    table:      'download_tasks',
+    column:     'expected_track_count',
+    definition: {
+      type:      DataTypes.INTEGER,
+      allowNull: true,
+    },
+  },
 ];
 
 /**

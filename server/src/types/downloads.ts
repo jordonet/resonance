@@ -164,6 +164,19 @@ export const directoryGroupSchema = z.object({
 export type DirectoryGroup = z.infer<typeof directoryGroupSchema>;
 
 /**
+ * Score breakdown for transparency
+ */
+export const scoreBreakdownSchema = z.object({
+  hasSlot:           z.number(),
+  qualityScore:      z.number(),
+  fileCountScore:    z.number(),
+  uploadSpeedBonus:  z.number(),
+  completenessScore: z.number(),
+});
+
+export type ScoreBreakdown = z.infer<typeof scoreBreakdownSchema>;
+
+/**
  * Scored search response for UI display
  */
 export const scoredSearchResponseSchema = z.object({
@@ -180,11 +193,15 @@ export const scoredSearchResponseSchema = z.object({
     hasFreeUploadSlot: z.boolean().optional(),
     uploadSpeed:       z.number().optional(),
   }),
-  score:          z.number(),
-  musicFileCount: z.number(),
-  totalSize:      z.number(),
-  qualityInfo:    qualityInfoSchema.nullable(),
-  directories:    z.array(directoryGroupSchema),
+  score:              z.number(),
+  scorePercent:       z.number(),
+  scoreBreakdown:     scoreBreakdownSchema,
+  musicFileCount:     z.number(),
+  totalSize:          z.number(),
+  qualityInfo:        qualityInfoSchema.nullable(),
+  directories:        z.array(directoryGroupSchema),
+  expectedTrackCount: z.number().optional(),
+  completenessRatio:  z.number().optional(),
 });
 
 export type ScoredSearchResponse = z.infer<typeof scoredSearchResponseSchema>;
@@ -200,8 +217,9 @@ export const searchResultsResponseSchema = z.object({
     searchQuery:        z.string(),
     selectionExpiresAt: z.coerce.date().nullable(),
   }),
-  results:          z.array(scoredSearchResponseSchema),
-  skippedUsernames: z.array(z.string()),
+  results:              z.array(scoredSearchResponseSchema),
+  skippedUsernames:     z.array(z.string()),
+  minCompletenessRatio: z.number(),
 });
 
 export type SearchResultsResponse = z.infer<typeof searchResultsResponseSchema>;
