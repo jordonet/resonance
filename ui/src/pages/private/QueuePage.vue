@@ -127,7 +127,6 @@ const { isHelpOpen, closeHelp, shortcuts } = useKeyboardShortcuts({
   onClearFocus:    handleClearFocus,
 });
 
-// Track grid columns via ResizeObserver
 let resizeObserver: ResizeObserver | null = null;
 
 function updateGridColumns() {
@@ -151,12 +150,10 @@ function updateGridColumns() {
 }
 
 function setGridContainerRef(el: HTMLElement | null) {
-  // Skip if same element
   if (el === gridContainerRef.value) {
     return;
   }
 
-  // Clean up old observer when element changes
   if (resizeObserver) {
     resizeObserver.disconnect();
     resizeObserver = null;
@@ -164,7 +161,6 @@ function setGridContainerRef(el: HTMLElement | null) {
 
   gridContainerRef.value = el;
 
-  // Set up new observer for the new element
   if (el) {
     resizeObserver = new ResizeObserver(updateGridColumns);
     resizeObserver.observe(el);
@@ -191,7 +187,6 @@ watch(
   }
 );
 
-// Reset focus index when items change
 watch(
   () => items.value.length,
   (newLength) => {

@@ -49,15 +49,12 @@ useWishlistSocket();
 
 const { uiPreferences } = useSettings();
 
-// View mode
 const viewMode = ref<ViewMode>(uiPreferences.value.wishlistViewMode || 'grid');
 
-// Modal state
 const editModalVisible = ref(false);
 const editingItem = ref<WishlistEntryWithStatus | null>(null);
 const importModalVisible = ref(false);
 
-// Export menu
 const exportMenu = ref();
 const exportMenuItems = ref([
   {
@@ -73,12 +70,10 @@ const exportMenuItems = ref([
   },
 ]);
 
-// Fetch on mount
 onMounted(() => {
   fetchWishlist();
 });
 
-// Watch for filter changes
 watch(
   () => [
     filters.value.source,
@@ -92,12 +87,10 @@ watch(
   }
 );
 
-// Watch view mode and persist to preferences
 watch(viewMode, (newMode) => {
   uiPreferences.value.wishlistViewMode = newMode;
 });
 
-// Handlers
 function handleSelect(id: string) {
   toggleSelection(id);
 }
@@ -174,7 +167,6 @@ async function handleImport(importedItems: ImportItem[]) {
 }
 
 function handleSelectionChange(selectedItems: WishlistEntryWithStatus[]) {
-  // Clear current selection and add new items
   clearSelection();
   selectedItems.forEach(item => toggleSelection(item.id));
 }

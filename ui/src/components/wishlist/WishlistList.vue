@@ -42,7 +42,6 @@ const selectedItems = computed({
   },
 });
 
-// Scroll focused row into view
 watch(
   () => props.focusIndex,
   (index) => {

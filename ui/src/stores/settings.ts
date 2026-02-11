@@ -29,9 +29,6 @@ export const useSettingsStore = defineStore('settings', () => {
   const preview = computed(() => settings.value?.preview);
   const ui = computed(() => settings.value?.ui);
 
-  /**
-   * Load UI preferences from localStorage
-   */
   function loadUIPreferences(): UIPreferences {
     try {
       const stored = localStorage.getItem(UI_PREFS_KEY);
@@ -46,17 +43,11 @@ export const useSettingsStore = defineStore('settings', () => {
     return { ...DEFAULT_UI_PREFERENCES };
   }
 
-  /**
-   * Save UI preferences to localStorage
-   */
   function saveUIPreferences(prefs: Partial<UIPreferences>) {
     uiPreferences.value = { ...uiPreferences.value, ...prefs };
     localStorage.setItem(UI_PREFS_KEY, JSON.stringify(uiPreferences.value));
   }
 
-  /**
-   * Fetch all settings from server
-   */
   async function fetchSettings() {
     loading.value = true;
     error.value = null;
@@ -71,9 +62,6 @@ export const useSettingsStore = defineStore('settings', () => {
     }
   }
 
-  /**
-   * Update a settings section
-   */
   async function updateSection<T extends object>(
     section: SettingsSection,
     data: T
@@ -84,7 +72,6 @@ export const useSettingsStore = defineStore('settings', () => {
     try {
       await settingsApi.updateSection(section, data);
 
-      // Refresh settings to get updated values
       await fetchSettings();
 
       return true;
@@ -99,9 +86,6 @@ export const useSettingsStore = defineStore('settings', () => {
     }
   }
 
-  /**
-   * Validate settings without saving
-   */
   async function validateSection<T extends object>(
     section: SettingsSection,
     data: T

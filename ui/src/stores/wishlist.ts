@@ -41,7 +41,6 @@ export const useWishlistStore = defineStore('wishlist', () => {
     offset:    0,
   });
 
-  // Update limit when itemsPerPage preference changes
   watch(
     () => uiPreferences.value.itemsPerPage,
     (newLimit) => {
@@ -118,7 +117,6 @@ export const useWishlistStore = defineStore('wishlist', () => {
     try {
       const response = await wishlistApi.updateWishlistItem(id, data);
 
-      // Update the item in place
       const index = items.value.findIndex((item) => item.id === id);
 
       const existingItem = items.value[index];
@@ -152,11 +150,8 @@ export const useWishlistStore = defineStore('wishlist', () => {
     try {
       await wishlistApi.deleteFromWishlist(id);
 
-      // Remove from list
       items.value = items.value.filter((item) => item.id !== id);
       total.value = Math.max(0, total.value - 1);
-
-      // Remove from selection if selected
       selectedIds.value.delete(id);
 
       showSuccess('Removed from wishlist');
@@ -182,11 +177,8 @@ export const useWishlistStore = defineStore('wishlist', () => {
     try {
       const response = await wishlistApi.bulkDeleteWishlist(targetIds);
 
-      // Remove from list
       items.value = items.value.filter((item) => !targetIds.includes(item.id));
       total.value = Math.max(0, total.value - response.affected);
-
-      // Clear selection for deleted items
       targetIds.forEach((id) => selectedIds.value.delete(id));
 
       showSuccess(response.message);
@@ -212,7 +204,6 @@ export const useWishlistStore = defineStore('wishlist', () => {
     try {
       const response = await wishlistApi.bulkRequeueWishlist(targetIds);
 
-      // Update items in place to show they're re-queued
       items.value = items.value.map((item) => {
         if (targetIds.includes(item.id)) {
           return {

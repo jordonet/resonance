@@ -26,7 +26,6 @@ const emit = defineEmits<{
 
 const cardRef = ref<HTMLElement | null>(null);
 
-// Scroll focused card into view
 watch(
   () => props.focused,
   (isFocused) => {

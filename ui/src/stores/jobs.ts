@@ -43,7 +43,6 @@ export const useJobsStore = defineStore('jobs', () => {
         showError('Job failed', response.message);
       }
 
-      // Refresh status after triggering
       await fetchStatus();
     } catch(e) {
       const message = e instanceof Error ? e.message : 'Failed to trigger job';
@@ -69,7 +68,6 @@ export const useJobsStore = defineStore('jobs', () => {
         showError('Cancel failed', response.message);
       }
 
-      // Refresh status after cancelling
       await fetchStatus();
     } catch(e) {
       const message = e instanceof Error ? e.message : 'Failed to cancel job';

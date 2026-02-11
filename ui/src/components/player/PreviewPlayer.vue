@@ -89,7 +89,6 @@ const playButtonPt = {
   icon: { style: { color: 'inherit' } },
 };
 
-// Passthrough styles for overlay components
 const overlayButtonPt = {
   root: {
     style: {

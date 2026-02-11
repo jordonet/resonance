@@ -120,7 +120,6 @@ async function handleSave() {
     mode:                 form.mode,
   };
 
-  // Build subsonic object using spread pattern if any field is set
   const subsonicData = {
     ...(form.subsonic?.host?.trim() && { host: form.subsonic.host.trim() }),
     ...(form.subsonic?.username?.trim() && { username: form.subsonic.username.trim() }),
@@ -131,7 +130,6 @@ async function handleSave() {
     data.subsonic = subsonicData;
   }
 
-  // Build lastfm object if key is set
   if (form.lastfm?.api_key?.trim()) {
     data.lastfm = { api_key: form.lastfm.api_key.trim() };
   }

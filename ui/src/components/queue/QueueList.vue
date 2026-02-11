@@ -30,7 +30,6 @@ const emit = defineEmits<{
 
 const tableRef = ref<ComponentPublicInstance | null>(null);
 
-// Scroll focused row into view
 watch(
   () => props.focusIndex,
   (index) => {

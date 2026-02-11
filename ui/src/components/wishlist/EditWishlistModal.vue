@@ -32,7 +32,6 @@ const sourceOptions: Array<{ label: string; value: WishlistItemSource }> = [
   { label: 'Manual', value: 'manual' },
 ];
 
-// Form state
 const formData = ref<{
   artist:             string;
   title:              string;
@@ -55,7 +54,6 @@ const formData = ref<{
 
 const saving = ref(false);
 
-// Reset form when item changes
 watch(
   () => props.item,
   (item) => {

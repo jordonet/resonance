@@ -88,7 +88,6 @@ watch(() => props.visible, async(newVisible) => {
   if (newVisible && props.taskId) {
     await loadResults();
   } else {
-    // Reset state when closing
     searchResults.value = null;
     error.value = null;
     searchQuery.value = '';
@@ -128,7 +127,6 @@ async function loadResults() {
     searchResults.value = results;
     searchQuery.value = results.task.searchQuery;
 
-    // Start countdown if there's an expiration
     if (results.task.selectionExpiresAt) {
       startCountdown(new Date(results.task.selectionExpiresAt));
     }
@@ -212,7 +210,6 @@ function handleSkip(username: string) {
     skippedUsernames: [...searchResults.value.skippedUsernames, username],
   };
 
-  // Clear from expanded rows if present
   delete expandedRows.value[username];
 
   emit('skip', props.taskId, username);

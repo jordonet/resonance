@@ -95,7 +95,6 @@ async function handleAdd(item: SearchResult) {
   addingMbid.value = item.mbid;
 
   try {
-    // Map search type to wishlist type
     const wishlistType = searchType.value;
 
     // For artists, title is empty (search will use just artist name)

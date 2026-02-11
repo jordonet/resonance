@@ -76,7 +76,6 @@ function isItemActive(item: SidebarItem): boolean {
 }
 
 function isItemOrDescendantActive(item: SidebarItem): boolean {
-  // Item itself matches the current route
   if (isItemActive(item)) {
     return true;
   }

@@ -7,7 +7,6 @@ import { useWishlistStore } from '@/stores/wishlist';
 export function useWishlist() {
   const store = useWishlistStore();
 
-  // State (computed refs for reactivity)
   const items = computed(() => store.items);
   const total = computed(() => store.total);
   const loading = computed(() => store.loading);
@@ -15,18 +14,15 @@ export function useWishlist() {
   const filters = computed(() => store.filters);
   const selectedIds = computed(() => store.selectedIds);
 
-  // Computed
   const hasMore = computed(() => store.hasMore);
   const selectedCount = computed(() => store.selectedCount);
   const allSelected = computed(() => store.allSelected);
   const someSelected = computed(() => store.someSelected);
 
-  // Fetch operations
   async function fetchWishlist(append = false) {
     return store.fetchWishlist(append);
   }
 
-  // Single item operations
   async function updateItem(id: string, data: UpdateWishlistRequest) {
     return store.updateItem(id, data);
   }
@@ -35,7 +31,6 @@ export function useWishlist() {
     return store.deleteItem(id);
   }
 
-  // Bulk operations
   async function bulkDelete(ids?: string[]) {
     return store.bulkDelete(ids);
   }
@@ -44,7 +39,6 @@ export function useWishlist() {
     return store.bulkRequeue(ids);
   }
 
-  // Export/Import
   async function exportItems(format: ExportFormat, ids?: string[]) {
     return store.exportItems(format, ids);
   }
@@ -53,7 +47,6 @@ export function useWishlist() {
     return store.importItems(importedItems);
   }
 
-  // Selection helpers
   function isSelected(id: string) {
     return store.isSelected(id);
   }
@@ -74,12 +67,10 @@ export function useWishlist() {
     store.toggleSelectAll();
   }
 
-  // Processing state
   function isProcessing(id: string) {
     return store.isProcessing(id);
   }
 
-  // Filter management
   function updateFilters(newFilters: Partial<WishlistFilters>) {
     store.setFilters(newFilters);
   }
@@ -93,31 +84,22 @@ export function useWishlist() {
   }
 
   return {
-    // State
     items,
     total,
     loading,
     error,
     filters,
     selectedIds,
-
-    // Computed
     hasMore,
     selectedCount,
     allSelected,
     someSelected,
-
-    // Selection
     isSelected,
     toggleSelection,
     selectAll,
     clearSelection,
     toggleSelectAll,
-
-    // Processing
     isProcessing,
-
-    // Operations
     fetchWishlist,
     updateItem,
     deleteItem,

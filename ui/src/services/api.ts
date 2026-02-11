@@ -5,9 +5,6 @@ import { ROUTE_PATHS } from '@/constants/routes';
 
 let redirectingToLogin = false;
 
-/**
- * Retry configuration for database busy errors
- */
 const MAX_RETRIES = 3;
 const RETRY_DELAYS = [500, 1000, 2000]; // exponential backoff in ms
 
@@ -25,9 +22,6 @@ export function setToastCallback(callback: (message: string, detail?: string) =>
   showErrorToast = callback;
 }
 
-/**
- * Extended request config with retry tracking
- */
 interface RetryConfig extends InternalAxiosRequestConfig {
   _retryCount?: number;
 }
@@ -45,9 +39,6 @@ function isDatabaseBusyError(error: AxiosError): boolean {
   return data?.code === 'database_busy';
 }
 
-/**
- * Sleep helper for retry delays
- */
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -65,7 +56,6 @@ function getAuthMode(): string | null {
   return localStorage.getItem('auth_mode');
 }
 
-// Request interceptor to add auth headers based on mode
 client.interceptors.request.use((config) => {
   const authMode = getAuthMode();
 
@@ -74,7 +64,6 @@ client.interceptors.request.use((config) => {
     return config;
   }
 
-  // For API key mode, use Bearer token
   if (authMode === 'api_key') {
     const apiKey = localStorage.getItem('auth_api_key');
 
@@ -85,7 +74,6 @@ client.interceptors.request.use((config) => {
     return config;
   }
 
-  // Default: Basic auth mode
   const credentials = localStorage.getItem('auth_credentials');
 
   if (credentials) {
@@ -101,7 +89,6 @@ client.interceptors.response.use(
   async(error: AxiosError) => {
     const config = error.config as RetryConfig | undefined;
 
-    // Handle 401 - redirect to login
     if (error.response?.status === 401) {
       const authMode = getAuthMode();
 
@@ -120,7 +107,6 @@ client.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    // Handle 503 database_busy - retry with exponential backoff
     if (isDatabaseBusyError(error) && config) {
       const retryCount = config._retryCount || 0;
 
@@ -128,10 +114,8 @@ client.interceptors.response.use(
         config._retryCount = retryCount + 1;
         const delay = RETRY_DELAYS[retryCount] ?? RETRY_DELAYS[RETRY_DELAYS.length - 1] ?? 1000;
 
-        // Wait before retrying
         await sleep(delay);
 
-        // Retry the request
         return client.request(config);
       }
 

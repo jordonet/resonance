@@ -50,7 +50,6 @@ export const useThemeStore = defineStore('theme', () => {
   }
 
   function initialize() {
-    // Set up system preference detection
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
     systemPrefersDark.value = mediaQuery.matches;
@@ -60,7 +59,6 @@ export const useThemeStore = defineStore('theme', () => {
       applyTheme();
     });
 
-    // Apply initial theme from settings
     applyTheme();
   }
 

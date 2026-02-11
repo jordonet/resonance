@@ -25,7 +25,6 @@ defineEmits<{
   viewAll: [];
 }>();
 
-// Get icon and color based on activity type
 const getActivityMeta = (type: ActivityItem['type']) => {
   const meta = {
     added: {
@@ -58,7 +57,6 @@ const getActivityMeta = (type: ActivityItem['type']) => {
   return meta[type];
 };
 
-// Default cover placeholder
 const getDefaultCover = () => {
   return 'data:image/svg+xml,' + encodeURIComponent(`
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">

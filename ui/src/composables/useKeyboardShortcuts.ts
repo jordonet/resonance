@@ -42,7 +42,6 @@ export function useKeyboardShortcuts(config: KeyboardShortcutsConfig = {}) {
   }
 
   function handleKeydown(event: KeyboardEvent) {
-    // Ignore if typing in an input
     if (isInputFocused()) {
       return;
     }

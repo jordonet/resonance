@@ -4,7 +4,6 @@ import { ROUTE_PATHS, ROUTE_NAMES } from '@/constants/routes';
 import { useAuthStore } from '@/stores/auth';
 
 export const routes: RouteRecordRaw[] = [
-  // Root
   {
     path:     '/',
     name:     'root',
@@ -15,8 +14,6 @@ export const routes: RouteRecordRaw[] = [
     },
   },
 
-  // public
-  //
   // TODO: Make home page
   // {
   //   path:      '/',
@@ -31,7 +28,6 @@ export const routes: RouteRecordRaw[] = [
     component: () => import('@/pages/public/LoginPage.vue'),
   },
 
-  // private
   {
     path:      ROUTE_PATHS.DASHBOARD,
     name:      ROUTE_NAMES.DASHBOARD,
@@ -69,7 +65,6 @@ export const routes: RouteRecordRaw[] = [
     meta:      { requiresAuth: true },
   },
 
-  // 404
   {
     path:      '/:pathMatch(.*)*',
     name:      'not-found',
