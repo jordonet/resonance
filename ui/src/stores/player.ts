@@ -1,4 +1,4 @@
-import type { PreviewTrack, PlayerState } from '@/types/player';
+import type { PreviewTrack, PlayerState } from '@/types';
 
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
@@ -25,15 +25,11 @@ export const usePlayerStore = defineStore('player', () => {
   const hasTrack = computed(() => currentTrack.value !== null);
   const progress = computed(() => (duration.value > 0 ? currentTime.value / duration.value : 0));
 
-  /**
-   * Initialize or get the audio element
-   */
   function getAudio(): HTMLAudioElement {
     if (!audio) {
       audio = new Audio();
       audio.volume = volume.value;
 
-      // Event listeners
       audio.addEventListener('timeupdate', () => {
         currentTime.value = audio!.currentTime;
       });
@@ -67,9 +63,6 @@ export const usePlayerStore = defineStore('player', () => {
     return audio;
   }
 
-  /**
-   * Load a track for preview
-   */
   async function loadTrack(track: PreviewTrack): Promise<boolean> {
     // Stop any currently playing audio first and keep isClosing true until we have a valid URL
     isClosing = true;
@@ -88,7 +81,6 @@ export const usePlayerStore = defineStore('player', () => {
     source.value = null;
 
     try {
-      // For album types, use the album preview endpoint
       if (track.type === 'album' && track.album) {
         const albumResponse = await previewApi.getAlbumPreview({
           artist:      track.artist,
@@ -98,7 +90,6 @@ export const usePlayerStore = defineStore('player', () => {
         });
 
         if (!albumResponse.available || !albumResponse.url) {
-          // No preview available - show warning and close the player
           currentTrack.value = null;
           isLoading.value = false;
           showWarning('Preview Unavailable', `No preview found for "${ track.album }" by ${ track.artist }`);
@@ -106,7 +97,6 @@ export const usePlayerStore = defineStore('player', () => {
           return false;
         }
 
-        // Update the track title with the selected track name
         if (albumResponse.selectedTrack) {
           currentTrack.value = {
             ...track,
@@ -124,14 +114,12 @@ export const usePlayerStore = defineStore('player', () => {
         return true;
       }
 
-      // For regular tracks, use the standard preview endpoint
       const response = await previewApi.getPreview({
         artist: track.artist,
         track:  track.title,
       });
 
       if (!response.available || !response.url) {
-        // No preview available - show warning and close the player
         currentTrack.value = null;
         isLoading.value = false;
         showWarning('Preview Unavailable', `No preview found for "${ track.title }" by ${ track.artist }`);
@@ -157,9 +145,6 @@ export const usePlayerStore = defineStore('player', () => {
     }
   }
 
-  /**
-   * Play the current track
-   */
   function play(): void {
     if (!audio || !currentTrack.value) return;
 
@@ -170,9 +155,6 @@ export const usePlayerStore = defineStore('player', () => {
     isPlaying.value = true;
   }
 
-  /**
-   * Pause playback
-   */
   function pause(): void {
     if (!audio) return;
 
@@ -180,9 +162,6 @@ export const usePlayerStore = defineStore('player', () => {
     isPlaying.value = false;
   }
 
-  /**
-   * Toggle play/pause
-   */
   function togglePlay(): void {
     if (isPlaying.value) {
       pause();
@@ -191,9 +170,6 @@ export const usePlayerStore = defineStore('player', () => {
     }
   }
 
-  /**
-   * Seek to a position (0-1)
-   */
   function seek(position: number): void {
     if (!audio || duration.value === 0) return;
 
@@ -201,9 +177,6 @@ export const usePlayerStore = defineStore('player', () => {
     currentTime.value = audio.currentTime;
   }
 
-  /**
-   * Set volume (0-1)
-   */
   function setVolume(newVolume: number): void {
     volume.value = Math.max(0, Math.min(1, newVolume));
 
@@ -212,9 +185,6 @@ export const usePlayerStore = defineStore('player', () => {
     }
   }
 
-  /**
-   * Toggle mute
-   */
   function toggleMute(): void {
     isMuted.value = !isMuted.value;
 
@@ -223,9 +193,6 @@ export const usePlayerStore = defineStore('player', () => {
     }
   }
 
-  /**
-   * Close the player
-   */
   function close(): void {
     isClosing = true;
 
@@ -243,9 +210,6 @@ export const usePlayerStore = defineStore('player', () => {
     source.value = null;
   }
 
-  /**
-   * Play a track (load and start playback)
-   */
   async function playTrack(track: PreviewTrack): Promise<void> {
     const loaded = await loadTrack(track);
 
@@ -254,9 +218,6 @@ export const usePlayerStore = defineStore('player', () => {
     }
   }
 
-  /**
-   * Get state snapshot
-   */
   function getState(): PlayerState {
     return {
       currentTrack: currentTrack.value,

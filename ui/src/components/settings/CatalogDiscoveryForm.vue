@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import type { CatalogDiscoverySettings, CatalogDiscoveryFormData, CatalogDiscoveryForm } from '@/types/settings';
+import type { CatalogDiscoverySettings, CatalogDiscoveryFormData, CatalogDiscoveryForm } from '@/types';
 
 import { reactive, ref, watch, computed } from 'vue';
+import { useSettings } from '@/composables/useSettings';
 
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
@@ -10,8 +11,6 @@ import Select from 'primevue/select';
 import ToggleSwitch from 'primevue/toggleswitch';
 import Tag from 'primevue/tag';
 import Message from 'primevue/message';
-
-import { useSettings } from '@/composables/useSettings';
 
 const props = defineProps<{
   settings: CatalogDiscoverySettings | undefined;
@@ -120,7 +119,6 @@ async function handleSave() {
     mode:                 form.mode,
   };
 
-  // Build subsonic object using spread pattern if any field is set
   const subsonicData = {
     ...(form.subsonic?.host?.trim() && { host: form.subsonic.host.trim() }),
     ...(form.subsonic?.username?.trim() && { username: form.subsonic.username.trim() }),
@@ -131,7 +129,6 @@ async function handleSave() {
     data.subsonic = subsonicData;
   }
 
-  // Build lastfm object if key is set
   if (form.lastfm?.api_key?.trim()) {
     data.lastfm = { api_key: form.lastfm.api_key.trim() };
   }
@@ -185,7 +182,7 @@ async function handleSave() {
       </div>
     </div>
 
-    <details class="settings-form__section" :open="form.enabled">
+    <details class="settings-form__section">
       <summary class="settings-form__section-title">Subsonic Server</summary>
       <div class="settings-form__grid settings-form__grid--with-margin">
         <div class="settings-form__field">
@@ -231,7 +228,7 @@ async function handleSave() {
       </div>
     </details>
 
-    <details class="settings-form__section" :open="form.enabled">
+    <details class="settings-form__section">
       <summary class="settings-form__section-title">Last.fm API</summary>
       <div class="settings-form__grid settings-form__grid--with-margin">
         <div class="settings-form__field">
@@ -261,7 +258,7 @@ async function handleSave() {
       </div>
     </details>
 
-    <details class="settings-form__section" :open="form.enabled">
+    <details class="settings-form__section">
       <summary class="settings-form__section-title">Discovery Settings</summary>
       <div class="settings-form__grid settings-form__grid--with-margin">
         <div class="settings-form__field">

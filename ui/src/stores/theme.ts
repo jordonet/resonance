@@ -1,9 +1,9 @@
+import type { ThemeMode } from '@/types';
+
 import { defineStore, storeToRefs } from 'pinia';
 import { ref, computed, watch } from 'vue';
 
 import { useSettingsStore } from '@/stores/settings';
-
-export type ThemeMode = 'light' | 'dark' | 'system';
 
 export const useThemeStore = defineStore('theme', () => {
   const settingsStore = useSettingsStore();
@@ -50,7 +50,6 @@ export const useThemeStore = defineStore('theme', () => {
   }
 
   function initialize() {
-    // Set up system preference detection
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
     systemPrefersDark.value = mediaQuery.matches;
@@ -60,11 +59,10 @@ export const useThemeStore = defineStore('theme', () => {
       applyTheme();
     });
 
-    // Apply initial theme from settings
     applyTheme();
   }
 
-  // Watch for mode changes (from settings or elsewhere)
+  // Watch for mode changes from settings or elsewhere
   watch(mode, () => {
     applyTheme();
   });

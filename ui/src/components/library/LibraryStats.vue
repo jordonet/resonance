@@ -40,7 +40,7 @@ defineProps<{
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .library-stats {
   margin-bottom: 1.5rem;
 }

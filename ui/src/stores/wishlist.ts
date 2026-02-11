@@ -4,8 +4,8 @@ import type {
   UpdateWishlistRequest,
   ImportItem,
   ExportFormat,
-  DownloadStatus,
-} from '@/types/wishlist';
+  WishlistDownloadStatus,
+} from '@/types';
 
 import { defineStore, storeToRefs } from 'pinia';
 import { ref, computed, watch } from 'vue';
@@ -27,7 +27,6 @@ export const useWishlistStore = defineStore('wishlist', () => {
   const settingsStore = useSettingsStore();
   const { uiPreferences } = storeToRefs(settingsStore);
 
-  // State
   const items = ref<WishlistEntryWithStatus[]>([]);
   const total = ref(0);
   const loading = ref(false);
@@ -42,7 +41,6 @@ export const useWishlistStore = defineStore('wishlist', () => {
     offset:    0,
   });
 
-  // Update limit when itemsPerPage preference changes
   watch(
     () => uiPreferences.value.itemsPerPage,
     (newLimit) => {
@@ -50,7 +48,6 @@ export const useWishlistStore = defineStore('wishlist', () => {
     }
   );
 
-  // Computed
   const hasMore = computed(() => items.value.length < total.value);
   const selectedCount = computed(() => selectedIds.value.size);
   const allSelected = computed(() =>
@@ -58,7 +55,6 @@ export const useWishlistStore = defineStore('wishlist', () => {
   );
   const someSelected = computed(() => selectedIds.value.size > 0 && !allSelected.value);
 
-  // Selection helpers
   function isSelected(id: string): boolean {
     return selectedIds.value.has(id);
   }
@@ -87,12 +83,10 @@ export const useWishlistStore = defineStore('wishlist', () => {
     }
   }
 
-  // Processing helpers
   function isProcessing(id: string): boolean {
     return processingIds.value.has(id);
   }
 
-  // Fetch operations
   async function fetchWishlist(append = false) {
     loading.value = true;
     error.value = null;
@@ -116,7 +110,6 @@ export const useWishlistStore = defineStore('wishlist', () => {
     }
   }
 
-  // Update single item
   async function updateItem(id: string, data: UpdateWishlistRequest) {
     error.value = null;
     processingIds.value.add(id);
@@ -124,7 +117,6 @@ export const useWishlistStore = defineStore('wishlist', () => {
     try {
       const response = await wishlistApi.updateWishlistItem(id, data);
 
-      // Update the item in place
       const index = items.value.findIndex((item) => item.id === id);
 
       const existingItem = items.value[index];
@@ -151,7 +143,6 @@ export const useWishlistStore = defineStore('wishlist', () => {
     }
   }
 
-  // Delete single item
   async function deleteItem(id: string) {
     error.value = null;
     processingIds.value.add(id);
@@ -159,11 +150,8 @@ export const useWishlistStore = defineStore('wishlist', () => {
     try {
       await wishlistApi.deleteFromWishlist(id);
 
-      // Remove from list
       items.value = items.value.filter((item) => item.id !== id);
       total.value = Math.max(0, total.value - 1);
-
-      // Remove from selection if selected
       selectedIds.value.delete(id);
 
       showSuccess('Removed from wishlist');
@@ -176,7 +164,6 @@ export const useWishlistStore = defineStore('wishlist', () => {
     }
   }
 
-  // Bulk delete
   async function bulkDelete(ids?: string[]) {
     const targetIds = ids || Array.from(selectedIds.value);
 
@@ -190,11 +177,8 @@ export const useWishlistStore = defineStore('wishlist', () => {
     try {
       const response = await wishlistApi.bulkDeleteWishlist(targetIds);
 
-      // Remove from list
       items.value = items.value.filter((item) => !targetIds.includes(item.id));
       total.value = Math.max(0, total.value - response.affected);
-
-      // Clear selection for deleted items
       targetIds.forEach((id) => selectedIds.value.delete(id));
 
       showSuccess(response.message);
@@ -207,7 +191,6 @@ export const useWishlistStore = defineStore('wishlist', () => {
     }
   }
 
-  // Bulk requeue
   async function bulkRequeue(ids?: string[]) {
     const targetIds = ids || Array.from(selectedIds.value);
 
@@ -221,7 +204,6 @@ export const useWishlistStore = defineStore('wishlist', () => {
     try {
       const response = await wishlistApi.bulkRequeueWishlist(targetIds);
 
-      // Update items in place to show they're re-queued
       items.value = items.value.map((item) => {
         if (targetIds.includes(item.id)) {
           return {
@@ -246,7 +228,6 @@ export const useWishlistStore = defineStore('wishlist', () => {
     }
   }
 
-  // Export
   async function exportItems(format: ExportFormat, ids?: string[]) {
     try {
       const blob = await wishlistApi.exportWishlist(format, ids);
@@ -260,7 +241,6 @@ export const useWishlistStore = defineStore('wishlist', () => {
     }
   }
 
-  // Import
   async function importItems(importedItems: ImportItem[]) {
     try {
       const response = await wishlistApi.importWishlist(importedItems);
@@ -284,8 +264,7 @@ export const useWishlistStore = defineStore('wishlist', () => {
     }
   }
 
-  // Socket event handler
-  function updateItemDownloadStatus(taskId: string, status: DownloadStatus, errorMessage?: string) {
+  function updateItemDownloadStatus(taskId: string, status: WishlistDownloadStatus, errorMessage?: string) {
     const item = items.value.find((i) => i.downloadTaskId === taskId);
 
     if (item) {
@@ -297,7 +276,6 @@ export const useWishlistStore = defineStore('wishlist', () => {
     }
   }
 
-  // Filter management
   function setFilters(newFilters: Partial<WishlistFilters>) {
     filters.value = {
       ...filters.value,

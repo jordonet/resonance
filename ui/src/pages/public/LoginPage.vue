@@ -1,14 +1,17 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+
+import { useAuthStore } from '@/stores/auth';
+import { ROUTE_PATHS } from '@/constants/routes';
+
 import Card from 'primevue/card';
 import InputText from 'primevue/inputtext';
 import Password from 'primevue/password';
 import Button from 'primevue/button';
 import Message from 'primevue/message';
 import ProgressSpinner from 'primevue/progressspinner';
-import { useAuthStore } from '@/stores/auth';
-import { ROUTE_PATHS } from '@/constants/routes';
+
 import CrateIcon from '@/components/icons/CrateIcon.vue';
 
 const store = useAuthStore();
@@ -197,7 +200,7 @@ async function handleApiKeySubmit() {
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .logo-container {
   background: linear-gradient(135deg, var(--primary-500, #2b2bee) 0%, #6366f1 100%);
   border-radius: 0.75rem;

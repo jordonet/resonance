@@ -30,7 +30,6 @@ const emit = defineEmits<{
 
 const tableRef = ref<ComponentPublicInstance | null>(null);
 
-// Scroll focused row into view
 watch(
   () => props.focusIndex,
   (index) => {
@@ -353,15 +352,15 @@ function getSimilarTooltip(similarTo: string[] | undefined): string | null {
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 :deep(.queue-list__row--focused) {
   background-color: rgba(var(--primary-500-rgb, 99, 102, 241), 0.15) !important;
   outline: 2px solid var(--primary-500);
   outline-offset: -2px;
-}
 
-:deep(.queue-list__row--focused td) {
-  background-color: transparent !important;
+  td {
+    background-color: transparent !important;
+  }
 }
 
 /* Mobile card view */
@@ -369,70 +368,70 @@ function getSimilarTooltip(similarTo: string[] | undefined): string | null {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-}
 
-.queue-list-mobile__card {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  padding: 0.75rem;
-  border-radius: 0.5rem;
-  border: 1px solid var(--r-border-default);
-  background: var(--p-card-background);
-}
+  &__card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--r-border-default);
+    background: var(--p-card-background);
 
-.queue-list-mobile__card--focused {
-  border-color: var(--primary-500);
-  box-shadow: 0 0 0 2px var(--primary-500);
-}
+    &--focused {
+      border-color: var(--primary-500);
+      box-shadow: 0 0 0 2px var(--primary-500);
+    }
+  }
 
-.queue-list-mobile__header {
-  display: flex;
-  gap: 0.75rem;
-  align-items: flex-start;
-}
+  &__header {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
 
-.queue-list-mobile__cover {
-  width: 3rem;
-  height: 3rem;
-  border-radius: 0.375rem;
-  object-fit: cover;
-  flex-shrink: 0;
-  cursor: pointer;
-}
+  &__cover {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.375rem;
+    object-fit: cover;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
 
-.queue-list-mobile__info {
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-}
+  &__info {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+  }
 
-.queue-list-mobile__tags {
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  gap: 0.375rem;
-  flex-shrink: 0;
-}
+  &__tags {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0.375rem;
+    flex-shrink: 0;
+  }
 
-.queue-list-mobile__footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-}
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
 
-.queue-list-mobile__metadata {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  min-width: 0;
-}
+  &__metadata {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 0;
+  }
 
-.queue-list-mobile__actions {
-  display: flex;
-  gap: 0.5rem;
-  flex-shrink: 0;
+  &__actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-shrink: 0;
+  }
 }
 </style>

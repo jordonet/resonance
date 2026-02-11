@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import type { QueueItem } from '@/types/queue';
+import type { QueueItem } from '@/types';
 
 import { ref, watch } from 'vue';
 import { useJobs } from '@/composables/useJobs';
 
 import ProgressSpinner from 'primevue/progressspinner';
+
 import EmptyState from '@/components/common/EmptyState.vue';
-import QueueItemCard from './QueueItemCard.vue';
+import QueueItemCard from '@/components/queue/QueueItemCard.vue';
 
 interface Props {
   items:         QueueItem[];

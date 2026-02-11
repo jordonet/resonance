@@ -3,11 +3,12 @@ import type {
   QueueItemAddedEvent,
   QueueItemUpdatedEvent,
   QueueStatsUpdatedEvent,
-} from '@/types/socket';
+} from '@/types';
 
 import { onMounted, onUnmounted } from 'vue';
+
 import { useQueueStore } from '@/stores/queue';
-import { useSocketConnection } from './useSocketConnection';
+import { useSocketConnection } from '@/composables/useSocketConnection';
 
 export function useQueueSocket() {
   const { connected, connect, disconnect } = useSocketConnection('/queue');

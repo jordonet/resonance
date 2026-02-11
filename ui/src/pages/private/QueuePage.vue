@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import type { QueueItem } from '@/types';
-import type { ViewMode } from '@/components/queue/QueueFilters.vue';
-import type { NavigationDirection } from '@/composables/useKeyboardShortcuts';
+import type { NavigationDirection, QueueItem, ViewMode } from '@/types';
 
 import {
   onMounted, onUnmounted, ref, watch, computed
@@ -127,7 +125,6 @@ const { isHelpOpen, closeHelp, shortcuts } = useKeyboardShortcuts({
   onClearFocus:    handleClearFocus,
 });
 
-// Track grid columns via ResizeObserver
 let resizeObserver: ResizeObserver | null = null;
 
 function updateGridColumns() {
@@ -151,12 +148,10 @@ function updateGridColumns() {
 }
 
 function setGridContainerRef(el: HTMLElement | null) {
-  // Skip if same element
   if (el === gridContainerRef.value) {
     return;
   }
 
-  // Clean up old observer when element changes
   if (resizeObserver) {
     resizeObserver.disconnect();
     resizeObserver = null;
@@ -164,7 +159,6 @@ function setGridContainerRef(el: HTMLElement | null) {
 
   gridContainerRef.value = el;
 
-  // Set up new observer for the new element
   if (el) {
     resizeObserver = new ResizeObserver(updateGridColumns);
     resizeObserver.observe(el);
@@ -191,7 +185,6 @@ watch(
   }
 );
 
-// Reset focus index when items change
 watch(
   () => items.value.length,
   (newLength) => {
@@ -304,123 +297,113 @@ function handlePreview(item: QueueItem) {
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .queue-page {
   max-width: 1200px;
   margin: 0 auto;
-}
 
-.queue-page__header {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-bottom: 2rem;
-}
+  &__header {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 2rem;
 
-@media (min-width: 768px) {
-  .queue-page__header {
-    flex-direction: row;
-    align-items: flex-end;
-    justify-content: space-between;
+    @media (min-width: 768px) {
+      flex-direction: row;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
   }
-}
 
-.queue-page__title {
-  font-size: 1.875rem;
-  font-weight: 700;
-  color: var(--r-text-primary);
-  line-height: 1.2;
-  margin: 0;
-}
+  &__title {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: var(--r-text-primary);
+    line-height: 1.2;
+    margin: 0;
 
-@media (min-width: 768px) {
-  .queue-page__title {
-    font-size: 2.25rem;
+    @media (min-width: 768px) {
+      font-size: 2.25rem;
+    }
   }
-}
 
-.queue-page__count {
-  font-weight: 400;
-  color: var(--surface-300);
-  margin-left: 0.5rem;
-  font-size: 1.5rem;
-}
-
-.queue-page__subtitle {
-  font-size: 0.875rem;
-  color: var(--surface-300);
-  margin: 0.5rem 0 0 0;
-  max-width: 40rem;
-  line-height: 1.6;
-}
-
-@media (min-width: 768px) {
-  .queue-page__subtitle {
-    font-size: 1rem;
+  &__count {
+    font-weight: 400;
+    color: var(--surface-300);
+    margin-left: 0.5rem;
+    font-size: 1.5rem;
   }
-}
 
-.queue-page__subtitle-break {
-  display: none;
-}
+  &__subtitle {
+    font-size: 0.875rem;
+    color: var(--surface-300);
+    margin: 0.5rem 0 0 0;
+    max-width: 40rem;
+    line-height: 1.6;
 
-@media (min-width: 768px) {
-  .queue-page__subtitle-break {
-    display: block;
+    @media (min-width: 768px) {
+      font-size: 1rem;
+    }
   }
-}
 
-.queue-page__shortcuts {
-  display: inline-block;
-  font-size: 0.75rem;
-  opacity: 0.6;
-  margin-top: 0.5rem;
-}
+  &__subtitle-break {
+    display: none;
 
-.queue-page__shortcuts kbd {
-  background: var(--r-hover-bg);
-  padding: 0.125rem 0.375rem;
-  border-radius: 0.25rem;
-  margin: 0 0.25rem;
-  font-family: inherit;
-}
-
-.queue-page__filters {
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid var(--r-border-default);
-}
-
-.queue-page__content {
-  min-height: 400px;
-}
-
-.queue-page__load-more {
-  margin-top: 2rem;
-  text-align: center;
-}
-
-.queue-page__footer {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  margin-top: 3rem;
-  padding-top: 2rem;
-  border-top: 1px solid var(--r-border-default);
-  color: var(--r-text-muted);
-  font-size: 0.875rem;
-}
-
-@media (min-width: 768px) {
-  .queue-page__footer {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+    @media (min-width: 768px) {
+      display: block;
+    }
   }
-}
 
-.queue-page__footer p {
-  margin: 0;
+  &__shortcuts {
+    display: inline-block;
+    font-size: 0.75rem;
+    opacity: 0.6;
+    margin-top: 0.5rem;
+
+    kbd {
+      background: var(--r-hover-bg);
+      padding: 0.125rem 0.375rem;
+      border-radius: 0.25rem;
+      margin: 0 0.25rem;
+      font-family: inherit;
+    }
+  }
+
+  &__filters {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--r-border-default);
+  }
+
+  &__content {
+    min-height: 400px;
+  }
+
+  &__load-more {
+    margin-top: 2rem;
+    text-align: center;
+  }
+
+  &__footer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--r-border-default);
+    color: var(--r-text-muted);
+    font-size: 0.875rem;
+
+    @media (min-width: 768px) {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    p {
+      margin: 0;
+    }
+  }
 }
 
 /* Button styling */

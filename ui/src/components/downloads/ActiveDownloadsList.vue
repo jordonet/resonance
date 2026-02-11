@@ -5,16 +5,16 @@ import { ref } from 'vue';
 import { useConfirm } from 'primevue/useconfirm';
 import { formatRelativeTime } from '@/utils/formatters';
 import { useBreakpoint } from '@/composables/useBreakpoint';
+import { useJobs } from '@/composables/useJobs';
 
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Tag from 'primevue/tag';
 import Button from 'primevue/button';
 
-import DownloadProgress from './DownloadProgress.vue';
-import QualityBadge from './QualityBadge.vue';
+import DownloadProgress from '@/components/downloads/DownloadProgress.vue';
+import QualityBadge from '@/components/downloads/QualityBadge.vue';
 import EmptyState from '@/components/common/EmptyState.vue';
-import { useJobs } from '@/composables/useJobs';
 
 interface Props {
   downloads: ActiveDownload[];
@@ -264,7 +264,7 @@ function formatTimeRemaining(expiresAt: string | null | undefined): string | nul
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .active-downloads-list {
   width: 100%;
 }
@@ -290,41 +290,41 @@ function formatTimeRemaining(expiresAt: string | null | undefined): string | nul
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-}
 
-.downloads-mobile__card {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  padding: 0.75rem;
-  border-radius: 0.5rem;
-  border: 1px solid var(--r-border-default);
-  background: var(--p-card-background);
-}
+  &__card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--r-border-default);
+    background: var(--p-card-background);
+  }
 
-.downloads-mobile__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 0.5rem;
-}
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
 
-.downloads-mobile__info {
-  flex: 1;
-  min-width: 0;
-}
+  &__info {
+    flex: 1;
+    min-width: 0;
+  }
 
-.downloads-mobile__meta {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 0.375rem;
-  flex-shrink: 0;
-}
+  &__meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.375rem;
+    flex-shrink: 0;
+  }
 
-.downloads-mobile__actions {
-  display: flex;
-  gap: 0.5rem;
-  justify-content: flex-end;
+  &__actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+  }
 }
 </style>

@@ -84,8 +84,9 @@ export default [
         singleline: { delimiter: 'semi', requireLast: false },
       }],
 
-      'no-cond-assign': ['warn', 'except-parens'],
-      'no-unused-vars': ['error', { 'argsIgnorePattern': '^_' }],
+      'no-cond-assign':        ['warn', 'except-parens'],
+      'no-unused-vars':        ['error', { 'argsIgnorePattern': '^_' }],
+      'no-useless-assignment': 'off',
 
       '@typescript-eslint/no-explicit-any':      'off',
       '@typescript-eslint/no-empty-object-type': 'off',

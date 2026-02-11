@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
+
 import Select from 'primevue/select';
 
 interface SourceData {
@@ -21,7 +22,6 @@ const timePeriodOptions = [
   { label: 'All Time', value: 'all' },
 ];
 
-// Calculate total for percentage
 const total = computed(() => props.sources.reduce((sum, s) => sum + s.value, 0));
 
 // Calculate stroke-dasharray and stroke-dashoffset for each segment
@@ -43,7 +43,6 @@ const segments = computed(() => {
   });
 });
 
-// Get percentage for display
 const getPercentage = (value: number): number => {
   return total.value > 0 ? Math.round((value / total.value) * 100) : 0;
 };

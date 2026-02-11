@@ -1,7 +1,13 @@
 <script setup lang="ts">
-import type { SearchResult } from '@/types/search';
+import type { SearchResult } from '@/types';
 
 import { ref, watch } from 'vue';
+
+import { searchMusicBrainz } from '@/services/search';
+import { addToWishlist } from '@/services/wishlist';
+import { useToast } from '@/composables/useToast';
+import { useBreakpoint } from '@/composables/useBreakpoint';
+
 import Dialog from 'primevue/dialog';
 import InputText from 'primevue/inputtext';
 import SelectButton from 'primevue/selectbutton';
@@ -9,11 +15,6 @@ import Button from 'primevue/button';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import ProgressSpinner from 'primevue/progressspinner';
-
-import { searchMusicBrainz } from '@/services/search';
-import { addToWishlist } from '@/services/wishlist';
-import { useToast } from '@/composables/useToast';
-import { useBreakpoint } from '@/composables/useBreakpoint';
 
 const visible = defineModel<boolean>('visible', { default: false });
 
@@ -95,7 +96,6 @@ async function handleAdd(item: SearchResult) {
   addingMbid.value = item.mbid;
 
   try {
-    // Map search type to wishlist type
     const wishlistType = searchType.value;
 
     // For artists, title is empty (search will use just artist name)

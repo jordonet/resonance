@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import type { UISettings, AuthFormData } from '@/types/settings';
+import type { UISettings, AuthFormData } from '@/types';
 
 import { reactive, ref, watch, computed } from 'vue';
+import { useSettings } from '@/composables/useSettings';
 
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
@@ -9,8 +10,6 @@ import Select from 'primevue/select';
 import ToggleSwitch from 'primevue/toggleswitch';
 import Tag from 'primevue/tag';
 import Message from 'primevue/message';
-
-import { useSettings } from '@/composables/useSettings';
 
 const props = defineProps<{
   settings: UISettings | undefined;

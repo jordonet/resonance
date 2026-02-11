@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import type { WishlistEntryWithStatus, UpdateWishlistRequest, ImportItem } from '@/types/wishlist';
-import type { ViewMode } from '@/components/wishlist/WishlistFilters.vue';
+import type { WishlistEntryWithStatus, UpdateWishlistRequest, ImportItem, ViewMode } from '@/types';
 
 import { onMounted, ref, watch } from 'vue';
 import { useWishlist } from '@/composables/useWishlist';
@@ -49,15 +48,12 @@ useWishlistSocket();
 
 const { uiPreferences } = useSettings();
 
-// View mode
 const viewMode = ref<ViewMode>(uiPreferences.value.wishlistViewMode || 'grid');
 
-// Modal state
 const editModalVisible = ref(false);
 const editingItem = ref<WishlistEntryWithStatus | null>(null);
 const importModalVisible = ref(false);
 
-// Export menu
 const exportMenu = ref();
 const exportMenuItems = ref([
   {
@@ -73,12 +69,10 @@ const exportMenuItems = ref([
   },
 ]);
 
-// Fetch on mount
 onMounted(() => {
   fetchWishlist();
 });
 
-// Watch for filter changes
 watch(
   () => [
     filters.value.source,
@@ -92,12 +86,10 @@ watch(
   }
 );
 
-// Watch view mode and persist to preferences
 watch(viewMode, (newMode) => {
   uiPreferences.value.wishlistViewMode = newMode;
 });
 
-// Handlers
 function handleSelect(id: string) {
   toggleSelection(id);
 }
@@ -174,7 +166,6 @@ async function handleImport(importedItems: ImportItem[]) {
 }
 
 function handleSelectionChange(selectedItems: WishlistEntryWithStatus[]) {
-  // Clear current selection and add new items
   clearSelection();
   selectedItems.forEach(item => toggleSelection(item.id));
 }
@@ -294,104 +285,96 @@ function toggleExportMenu(event: Event) {
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .wishlist-page {
   max-width: 1200px;
   margin: 0 auto;
-}
 
-.wishlist-page__header {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-bottom: 2rem;
-}
+  &__header {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 2rem;
 
-@media (min-width: 768px) {
-  .wishlist-page__header {
-    flex-direction: row;
-    align-items: flex-end;
-    justify-content: space-between;
+    @media (min-width: 768px) {
+      flex-direction: row;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
   }
-}
 
-.wishlist-page__title {
-  font-size: 1.875rem;
-  font-weight: 700;
-  color: var(--r-text-primary);
-  line-height: 1.2;
-  margin: 0;
-}
+  &__title {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: var(--r-text-primary);
+    line-height: 1.2;
+    margin: 0;
 
-@media (min-width: 768px) {
-  .wishlist-page__title {
-    font-size: 2.25rem;
+    @media (min-width: 768px) {
+      font-size: 2.25rem;
+    }
   }
-}
 
-.wishlist-page__count {
-  font-weight: 400;
-  color: var(--surface-300);
-  margin-left: 0.5rem;
-  font-size: 1.5rem;
-}
-
-.wishlist-page__subtitle {
-  font-size: 0.875rem;
-  color: var(--surface-300);
-  margin: 0.5rem 0 0 0;
-  max-width: 40rem;
-  line-height: 1.6;
-}
-
-@media (min-width: 768px) {
-  .wishlist-page__subtitle {
-    font-size: 1rem;
+  &__count {
+    font-weight: 400;
+    color: var(--surface-300);
+    margin-left: 0.5rem;
+    font-size: 1.5rem;
   }
-}
 
-.wishlist-page__actions {
-  display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-}
+  &__subtitle {
+    font-size: 0.875rem;
+    color: var(--surface-300);
+    margin: 0.5rem 0 0 0;
+    max-width: 40rem;
+    line-height: 1.6;
 
-.wishlist-page__filters {
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid var(--r-border-default);
-}
-
-.wishlist-page__content {
-  min-height: 400px;
-}
-
-.wishlist-page__load-more {
-  margin-top: 2rem;
-  text-align: center;
-}
-
-.wishlist-page__footer {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  margin-top: 3rem;
-  padding-top: 2rem;
-  border-top: 1px solid var(--r-border-default);
-  color: var(--r-text-muted);
-  font-size: 0.875rem;
-}
-
-@media (min-width: 768px) {
-  .wishlist-page__footer {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+    @media (min-width: 768px) {
+      font-size: 1rem;
+    }
   }
-}
 
-.wishlist-page__footer p {
-  margin: 0;
+  &__actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  &__filters {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--r-border-default);
+  }
+
+  &__content {
+    min-height: 400px;
+  }
+
+  &__load-more {
+    margin-top: 2rem;
+    text-align: center;
+  }
+
+  &__footer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--r-border-default);
+    color: var(--r-text-muted);
+    font-size: 0.875rem;
+
+    @media (min-width: 768px) {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    p {
+      margin: 0;
+    }
+  }
 }
 
 /* Button styling */

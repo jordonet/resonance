@@ -25,7 +25,6 @@ export const useQueueStore = defineStore('queue', () => {
     offset: 0,
   });
 
-  // Update limit when itemsPerPage preference changes
   watch(
     () => uiPreferences.value.itemsPerPage,
     (newLimit) => {
@@ -63,13 +62,11 @@ export const useQueueStore = defineStore('queue', () => {
   async function approve(mbids: string[]) {
     error.value = null;
 
-    // Track processing state for each item
     mbids.forEach((mbid) => processingIds.value.add(mbid));
 
     try {
       await queueApi.approve({ mbids });
 
-      // Remove approved items from the list
       items.value = items.value.filter((item) => !mbids.includes(item.mbid));
       total.value = Math.max(0, total.value - mbids.length);
 
@@ -93,13 +90,11 @@ export const useQueueStore = defineStore('queue', () => {
   async function reject(mbids: string[]) {
     error.value = null;
 
-    // Track processing state for each item
     mbids.forEach((mbid) => processingIds.value.add(mbid));
 
     try {
       await queueApi.reject({ mbids });
 
-      // Remove rejected items from the list
       items.value = items.value.filter((item) => !mbids.includes(item.mbid));
       total.value = Math.max(0, total.value - mbids.length);
 

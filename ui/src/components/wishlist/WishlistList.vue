@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { WishlistEntryWithStatus, DownloadStatus } from '@/types/wishlist';
+import type { WishlistEntryWithStatus, WishlistDownloadStatus } from '@/types';
 import type { ComponentPublicInstance } from 'vue';
 
 import { ref, watch, computed } from 'vue';
@@ -42,7 +42,6 @@ const selectedItems = computed({
   },
 });
 
-// Scroll focused row into view
 watch(
   () => props.focusIndex,
   (index) => {
@@ -102,8 +101,8 @@ function getSourceLabel(source: string | null | undefined): string {
   return 'Manual';
 }
 
-function getStatusSeverity(status: DownloadStatus): 'success' | 'info' | 'warn' | 'danger' | 'secondary' {
-  const map: Record<DownloadStatus, 'success' | 'info' | 'warn' | 'danger' | 'secondary'> = {
+function getStatusSeverity(status: WishlistDownloadStatus): 'success' | 'info' | 'warn' | 'danger' | 'secondary' {
+  const map: Record<WishlistDownloadStatus, 'success' | 'info' | 'warn' | 'danger' | 'secondary'> = {
     none:              'secondary',
     pending:           'info',
     searching:         'info',
@@ -118,8 +117,8 @@ function getStatusSeverity(status: DownloadStatus): 'success' | 'info' | 'warn' 
   return map[status] || 'secondary';
 }
 
-function getStatusLabel(status: DownloadStatus): string {
-  const map: Record<DownloadStatus, string> = {
+function getStatusLabel(status: WishlistDownloadStatus): string {
+  const map: Record<WishlistDownloadStatus, string> = {
     none:              'Pending',
     pending:           'Queued',
     searching:         'Searching',
@@ -134,7 +133,7 @@ function getStatusLabel(status: DownloadStatus): string {
   return map[status] || 'Unknown';
 }
 
-function canRequeue(status: DownloadStatus): boolean {
+function canRequeue(status: WishlistDownloadStatus): boolean {
   return ['none', 'failed', 'completed'].includes(status);
 }
 </script>
@@ -354,92 +353,92 @@ function canRequeue(status: DownloadStatus): boolean {
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 /* Mobile card view */
 .wishlist-mobile {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-}
 
-.wishlist-mobile__card {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  padding: 0.75rem;
-  border-radius: 0.5rem;
-  border: 1px solid var(--r-border-default);
-  background: var(--p-card-background);
-}
+  &__card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--r-border-default);
+    background: var(--p-card-background);
 
-.wishlist-mobile__card--focused {
-  background-color: rgba(var(--primary-500-rgb, 99, 102, 241), 0.15);
-  outline: 2px solid var(--primary-500);
-  outline-offset: -2px;
-}
+    &--focused {
+      background-color: rgba(var(--primary-500-rgb, 99, 102, 241), 0.15);
+      outline: 2px solid var(--primary-500);
+      outline-offset: -2px;
+    }
+  }
 
-.wishlist-mobile__header {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.75rem;
-}
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
 
-.wishlist-mobile__cover {
-  width: 3rem;
-  height: 3rem;
-  border-radius: 0.25rem;
-  object-fit: cover;
-  flex-shrink: 0;
-}
+  &__cover {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.25rem;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
 
-.wishlist-mobile__info {
-  flex: 1;
-  min-width: 0;
-}
+  &__info {
+    flex: 1;
+    min-width: 0;
+  }
 
-.wishlist-mobile__tags {
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  gap: 0.375rem;
-  flex-shrink: 0;
-}
+  &__tags {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0.375rem;
+    flex-shrink: 0;
+  }
 
-.wishlist-mobile__tags-item {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-}
+  &__tags-item {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
 
-.wishlist-mobile__footer {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 0.5rem;
-}
+  &__footer {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
 
-.wishlist-mobile__metadata {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  min-width: 0;
-}
+  &__metadata {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 0;
+  }
 
-.wishlist-mobile__actions {
-  display: flex;
-  gap: 0.5rem;
-  flex-shrink: 0;
+  &__actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-shrink: 0;
+  }
 }
 
 :deep(.wishlist-list__row--focused) {
   background-color: rgba(var(--primary-500-rgb, 99, 102, 241), 0.15) !important;
   outline: 2px solid var(--primary-500);
   outline-offset: -2px;
-}
 
-:deep(.wishlist-list__row--focused td) {
-  background-color: transparent !important;
+  td {
+    background-color: transparent !important;
+  }
 }
 
 @media (max-width: 1100px) {

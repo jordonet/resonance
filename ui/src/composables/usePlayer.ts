@@ -2,7 +2,7 @@ import type { QueueItem, PreviewTrack } from '@/types';
 
 import { computed } from 'vue';
 import { usePlayerStore } from '@/stores/player';
-import { queueItemToPreviewTrack } from '@/types/player';
+import { queueItemToPreviewTrack } from '@/types';
 
 export function usePlayer() {
   const store = usePlayerStore();
@@ -19,16 +19,10 @@ export function usePlayer() {
   const hasTrack = computed(() => store.hasTrack);
   const progress = computed(() => store.progress);
 
-  /**
-   * Play a track from a PreviewTrack object
-   */
   async function playTrack(track: PreviewTrack): Promise<void> {
     return store.playTrack(track);
   }
 
-  /**
-   * Play a track from a QueueItem
-   */
   async function playQueueItem(item: QueueItem): Promise<void> {
     const track = queueItemToPreviewTrack(item);
 
@@ -64,7 +58,6 @@ export function usePlayer() {
   }
 
   return {
-    // State
     currentTrack,
     isPlaying,
     isLoading,
@@ -76,8 +69,6 @@ export function usePlayer() {
     source,
     hasTrack,
     progress,
-
-    // Actions
     playTrack,
     playQueueItem,
     play,

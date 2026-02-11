@@ -3,7 +3,7 @@ import type {
   SlskdSettings,
   SlskdFormData,
   SlskdForm,
-} from '@/types/settings';
+} from '@/types';
 
 import { reactive, ref, watch, computed } from 'vue';
 import { useSettings } from '@/composables/useSettings';
@@ -34,7 +34,6 @@ const selectionModeOptions = [
   { label: 'Auto', value: 'auto' },
 ];
 
-// Static suggestion lists for AutoComplete fields
 const FORMAT_SUGGESTIONS = ['flac', 'wav', 'alac', 'aiff', 'mp3', 'm4a', 'aac', 'ogg', 'opus', 'wma'];
 const EXCLUDE_TERM_SUGGESTIONS = ['live', 'remix', 'demo', 'cover', 'acoustic', 'instrumental', 'remaster', 'bootleg', 'karaoke', 'tribute'];
 const FALLBACK_QUERY_SUGGESTIONS = ['{artist}', '{album}', '{artist} {album}', '{artist} discography', '{artist} {album} {year}'];
@@ -162,7 +161,6 @@ async function handleSave() {
   emit('save', data);
 }
 
-// AutoComplete search handlers - include query as option for custom values
 function searchFormats(event: { query: string }) {
   const query = event.query.trim();
   const queryLower = query.toLowerCase();

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ImportItem, ImportResponse, ImportResultItem } from '@/types/wishlist';
+import type { ImportItem, ImportResponse, ImportResultItem } from '@/types';
 
 import { ref, computed } from 'vue';
 import { useBreakpoint } from '@/composables/useBreakpoint';
@@ -324,7 +324,7 @@ function getResultSeverity(status: ImportResultItem['status']): 'success' | 'war
   </Dialog>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .import-preview-table {
   max-height: 400px;
   overflow: auto;
@@ -337,27 +337,27 @@ function getResultSeverity(status: ImportResultItem['status']): 'success' | 'war
   gap: 0.75rem;
   max-height: 400px;
   overflow: auto;
-}
 
-.import-mobile__card {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  padding: 0.75rem;
-  border-radius: 0.5rem;
-  border: 1px solid var(--r-border-default);
-  background: var(--p-card-background);
-}
+  &__card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--r-border-default);
+    background: var(--p-card-background);
+  }
 
-.import-mobile__info {
-  flex: 1;
-  min-width: 0;
-}
+  &__info {
+    flex: 1;
+    min-width: 0;
+  }
 
-.import-mobile__meta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem;
+  &__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
 }
 </style>

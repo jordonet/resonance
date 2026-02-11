@@ -1,5 +1,3 @@
-import axios from 'axios';
-import logger from '@server/config/logger';
 import type {
   DeezerSearchResponse,
   DeezerSearchResult,
@@ -7,7 +5,10 @@ import type {
   DeezerAlbumTracksResponse,
 } from '@server/types/preview';
 
-const BASE_URL = 'https://api.deezer.com';
+import axios from 'axios';
+
+import logger from '@server/config/logger';
+import { DEEZER_BASE_URL } from '@server/constants/clients';
 
 /**
  * DeezerClient provides access to Deezer API for track preview URLs.
@@ -53,7 +54,7 @@ export class DeezerClient {
    * Execute search query against Deezer API
    */
   private async search(query: string): Promise<DeezerSearchResult | null> {
-    const response = await axios.get<DeezerSearchResponse>(`${ BASE_URL }/search`, {
+    const response = await axios.get<DeezerSearchResponse>(`${ DEEZER_BASE_URL }/search`, {
       params:  { q: query },
       timeout: 10000,
     });
@@ -77,7 +78,7 @@ export class DeezerClient {
     try {
       // Try exact search first
       const exactQuery = `artist:"${ artist }" album:"${ album }"`;
-      const response = await axios.get<DeezerAlbumSearchResponse>(`${ BASE_URL }/search/album`, {
+      const response = await axios.get<DeezerAlbumSearchResponse>(`${ DEEZER_BASE_URL }/search/album`, {
         params:  { q: exactQuery },
         timeout: 10000,
       });
@@ -90,7 +91,7 @@ export class DeezerClient {
 
       // Fallback to looser search
       const looseQuery = `${ artist } ${ album }`;
-      const looseResponse = await axios.get<DeezerAlbumSearchResponse>(`${ BASE_URL }/search/album`, {
+      const looseResponse = await axios.get<DeezerAlbumSearchResponse>(`${ DEEZER_BASE_URL }/search/album`, {
         params:  { q: looseQuery },
         timeout: 10000,
       });
@@ -119,7 +120,7 @@ export class DeezerClient {
   async getAlbumTrackCount(artist: string, album: string): Promise<number | null> {
     try {
       const exactQuery = `artist:"${ artist }" album:"${ album }"`;
-      const response = await axios.get<DeezerAlbumSearchResponse>(`${ BASE_URL }/search/album`, {
+      const response = await axios.get<DeezerAlbumSearchResponse>(`${ DEEZER_BASE_URL }/search/album`, {
         params:  { q: exactQuery },
         timeout: 10000,
       });
@@ -132,7 +133,7 @@ export class DeezerClient {
 
       // Fallback to looser search
       const looseQuery = `${ artist } ${ album }`;
-      const looseResponse = await axios.get<DeezerAlbumSearchResponse>(`${ BASE_URL }/search/album`, {
+      const looseResponse = await axios.get<DeezerAlbumSearchResponse>(`${ DEEZER_BASE_URL }/search/album`, {
         params:  { q: looseQuery },
         timeout: 10000,
       });
@@ -160,7 +161,7 @@ export class DeezerClient {
    */
   async getAlbumTracks(albumId: number): Promise<DeezerAlbumTracksResponse['data']> {
     try {
-      const response = await axios.get<DeezerAlbumTracksResponse>(`${ BASE_URL }/album/${ albumId }/tracks`, { timeout: 10000 });
+      const response = await axios.get<DeezerAlbumTracksResponse>(`${ DEEZER_BASE_URL }/album/${ albumId }/tracks`, { timeout: 10000 });
 
       return response.data.data || [];
     } catch(error) {

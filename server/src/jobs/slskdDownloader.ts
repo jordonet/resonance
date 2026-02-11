@@ -9,10 +9,11 @@ import type { SlskdFile, SlskdSearchResponse } from '@server/types/slskd-client'
 import type { QueryContext } from '@server/types/search-query';
 
 import path from 'path';
-
 import { Op } from '@sequelize/core';
+
 import logger from '@server/config/logger';
-import { getConfig, SlskdSearchSettings } from '@server/config/settings';
+import type { SlskdSearchSettings } from '@server/config/schemas';
+import { getConfig } from '@server/config/settings';
 import { withDbWrite } from '@server/config/db';
 import DownloadTask from '@server/models/DownloadTask';
 import WishlistItem from '@server/models/WishlistItem';
@@ -20,8 +21,15 @@ import { DownloadService } from '@server/services/DownloadService';
 import { WishlistService } from '@server/services/WishlistService';
 import { SearchQueryBuilder } from '@server/services/SearchQueryBuilder';
 import { TrackCountService } from '@server/services/TrackCountService';
+import { buildQualityPreferences } from '@server/services/downloads/qualityPrefsBuilder';
 import { SlskdClient } from '@server/services/clients/SlskdClient';
 import { isJobCancelled } from '@server/plugins/jobs';
+import {
+  extractQualityInfo,
+  calculateAverageQualityScore,
+  shouldRejectFile,
+  getDominantQualityInfo,
+} from '@server/utils/audioQuality';
 
 import { JOB_NAMES } from '@server/constants/jobs';
 import {
@@ -33,15 +41,8 @@ import {
   MB_TO_BYTES,
   MUSIC_EXTENSIONS,
   QUALITY_SCORES,
-  DEFAULT_PREFERRED_FORMATS,
   MAX_STORED_SELECTION_RESULTS,
 } from '@server/constants/slskd';
-import {
-  extractQualityInfo,
-  calculateAverageQualityScore,
-  shouldRejectFile,
-  getDominantQualityInfo,
-} from '@server/utils/audioQuality';
 
 /**
  * Build SearchConfig from configuration settings.
@@ -75,15 +76,8 @@ function buildSearchConfig(
     maxRetryAttempts:     s?.retry?.max_attempts ?? 3,
     simplifyOnRetry:      s?.retry?.simplify_on_retry ?? true,
     retryDelayMs:         s?.retry?.delay_between_retries_ms ?? 5000,
-    qualityPreferences:   qp ? {
-      enabled:          qp.enabled ?? true,
-      preferredFormats: qp.preferred_formats ?? [...DEFAULT_PREFERRED_FORMATS],
-      minBitrate:       qp.min_bitrate ?? 256,
-      preferLossless:   qp.prefer_lossless ?? true,
-      rejectLowQuality: qp.reject_low_quality ?? false,
-      rejectLossless:   qp.reject_lossless ?? false,
-    } : undefined,
-    selection: {
+    qualityPreferences:   buildQualityPreferences(qp),
+    selection:            {
       mode:         selectionSettings?.mode ?? 'auto',
       timeoutHours: selectionSettings?.timeout_hours ?? 24,
     },

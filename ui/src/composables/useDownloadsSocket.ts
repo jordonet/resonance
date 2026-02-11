@@ -6,10 +6,10 @@ import type {
   DownloadStatsUpdatedEvent,
   DownloadPendingSelectionEvent,
   DownloadSelectionExpiredEvent,
-} from '@/types/socket';
+} from '@/types';
 
 import { onMounted, onUnmounted } from 'vue';
-import { useSocketConnection } from './useSocketConnection';
+import { useSocketConnection } from '@/composables/useSocketConnection';
 import { useDownloadsStore } from '@/stores/downloads';
 
 export function useDownloadsSocket() {
@@ -46,7 +46,6 @@ export function useDownloadsSocket() {
       download.fileCount = event.fileCount;
     }
 
-    // If completed or failed, remove from active list
     if (event.status === 'completed' || event.status === 'failed') {
       store.activeDownloads.splice(index, 1);
       store.activeTotal = Math.max(0, store.activeTotal - 1);
@@ -88,7 +87,6 @@ export function useDownloadsSocket() {
     const index = store.activeDownloads.findIndex((d) => d.id === event.id);
 
     if (index !== -1) {
-      // Remove from active list and refresh failed list
       store.activeDownloads.splice(index, 1);
       store.activeTotal = Math.max(0, store.activeTotal - 1);
       store.fetchFailed();

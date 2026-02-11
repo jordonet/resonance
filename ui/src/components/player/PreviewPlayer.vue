@@ -89,7 +89,6 @@ const playButtonPt = {
   icon: { style: { color: 'inherit' } },
 };
 
-// Passthrough styles for overlay components
 const overlayButtonPt = {
   root: {
     style: {
@@ -209,7 +208,7 @@ const volumeSliderPt = {
   </Transition>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .preview-player {
   position: fixed;
   bottom: 0;
@@ -221,185 +220,189 @@ const volumeSliderPt = {
   z-index: 1000;
   display: flex;
   flex-direction: column;
-}
 
-.preview-player__content {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 0 1.5rem;
-  max-width: 1400px;
-  margin: 0 auto;
-  width: 100%;
-}
-
-/* Album Art */
-.preview-player__cover {
-  position: relative;
-  width: 48px;
-  height: 48px;
-  flex-shrink: 0;
-  border-radius: 0.375rem;
-  overflow: hidden;
-  background: var(--surface-900);
-}
-
-.preview-player__image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.preview-player__loading {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--r-overlay-medium);
-  color: var(--primary-400);
-}
-
-.preview-player__loading i {
-  font-size: 1.25rem;
-}
-
-/* Track Info */
-.preview-player__info {
-  min-width: 120px;
-  max-width: 200px;
-  overflow: hidden;
-}
-
-.preview-player__title {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--r-overlay-text-primary);
-  margin: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.preview-player__artist {
-  font-size: 0.75rem;
-  color: var(--r-overlay-text-secondary);
-  margin: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* Controls */
-.preview-player__controls {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.preview-player__play-btn:hover {
-  color: var(--r-overlay-text-primary) !important;
-  border-color: var(--border-glow) !important;
-}
-
-.preview-player__play-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* Progress Bar */
-.preview-player__progress-container {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  min-width: 150px;
-  max-width: 600px;
-}
-
-.preview-player__progress {
-  flex: 1;
-  height: 4px;
-  background: var(--r-overlay-track);
-  border-radius: 2px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-}
-
-.preview-player__progress:hover {
-  height: 6px;
-}
-
-.preview-player__progress-fill {
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-  background: var(--r-overlay-track-fill);
-  border-radius: 2px;
-  transition: width 0.1s linear;
-}
-
-.preview-player__time {
-  font-size: 0.75rem;
-  color: var(--r-overlay-text-secondary);
-  font-variant-numeric: tabular-nums;
-  min-width: 70px;
-}
-
-/* Volume */
-.preview-player__volume {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.preview-player__volume-btn {
-  width: 2rem;
-  height: 2rem;
-}
-
-.preview-player__volume-btn:hover {
-  color: var(--r-overlay-text-primary) !important;
-}
-
-/* Source Badge */
-.preview-player__source {
-  display: none;
-}
-
-@media (min-width: 768px) {
-  .preview-player__source {
+  &__content {
+    flex: 1;
     display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0 1.5rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  /* Album Art */
+  &__cover {
+    position: relative;
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    border-radius: 0.375rem;
+    overflow: hidden;
+    background: var(--surface-900);
+  }
+
+  &__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &__loading {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--r-overlay-medium);
+    color: var(--primary-400);
+
+    i {
+      font-size: 1.25rem;
+    }
+  }
+
+  /* Track Info */
+  &__info {
+    min-width: 120px;
+    max-width: 200px;
+    overflow: hidden;
+  }
+
+  &__title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--r-overlay-text-primary);
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__artist {
+    font-size: 0.75rem;
+    color: var(--r-overlay-text-secondary);
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Controls */
+  &__controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__play-btn {
+    &:hover {
+      color: var(--r-overlay-text-primary) !important;
+      border-color: var(--border-glow) !important;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  /* Progress Bar */
+  &__progress-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 150px;
+    max-width: 600px;
+  }
+
+  &__progress {
+    flex: 1;
+    height: 4px;
+    background: var(--r-overlay-track);
+    border-radius: 2px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+
+    &:hover {
+      height: 6px;
+    }
+  }
+
+  &__progress-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: var(--r-overlay-track-fill);
+    border-radius: 2px;
+    transition: width 0.1s linear;
+  }
+
+  &__time {
+    font-size: 0.75rem;
+    color: var(--r-overlay-text-secondary);
+    font-variant-numeric: tabular-nums;
+    min-width: 70px;
+  }
+
+  /* Volume */
+  &__volume {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__volume-btn {
+    width: 2rem;
+    height: 2rem;
+
+    &:hover {
+      color: var(--r-overlay-text-primary) !important;
+    }
+  }
+
+  /* Source Badge */
+  &__source {
+    display: none;
+  }
+
+  /* Close Button */
+  &__close-btn {
+    width: 2rem;
+    height: 2rem;
+
+    &:hover {
+      color: var(--r-overlay-text-primary) !important;
+    }
+  }
+
+  /* Error State */
+  &__error {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%) translateY(-100%);
+    background: var(--red-500);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.375rem 0.375rem 0 0;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
   }
 }
 
-/* Close Button */
-.preview-player__close-btn {
-  width: 2rem;
-  height: 2rem;
-}
-
-.preview-player__close-btn:hover {
-  color: var(--r-overlay-text-primary) !important;
-}
-
-/* Error State */
-.preview-player__error {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%) translateY(-100%);
-  background: var(--red-500);
-  color: white;
-  padding: 0.25rem 0.75rem;
-  border-radius: 0.375rem 0.375rem 0 0;
-  font-size: 0.75rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+@media (min-width: 768px) {
+  .preview-player {
+    &__source {
+      display: flex;
+    }
+  }
 }
 
 /* Slide-up Animation */
@@ -416,26 +419,28 @@ const volumeSliderPt = {
 
 /* Responsive */
 @media (max-width: 640px) {
-  .preview-player__content {
-    gap: 0.75rem;
-    padding: 0 1rem;
-  }
+  .preview-player {
+    &__content {
+      gap: 0.75rem;
+      padding: 0 1rem;
+    }
 
-  .preview-player__info {
-    min-width: 80px;
-    max-width: 120px;
-  }
+    &__info {
+      min-width: 80px;
+      max-width: 120px;
+    }
 
-  .preview-player__progress-container {
-    min-width: 100px;
-  }
+    &__progress-container {
+      min-width: 100px;
+    }
 
-  .preview-player__time {
-    display: none;
-  }
+    &__time {
+      display: none;
+    }
 
-  .preview-player__volume {
-    display: none;
+    &__volume {
+      display: none;
+    }
   }
 }
 </style>

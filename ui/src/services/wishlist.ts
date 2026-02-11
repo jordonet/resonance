@@ -1,46 +1,19 @@
 import type {
-  WishlistEntry,
+  AddWishlistResponse,
   AddWishlistRequest,
+  DeleteWishlistResponse,
+  UpdateWishlistResponse,
   UpdateWishlistRequest,
+  WishlistResponse,
   WishlistFilters,
   PaginatedWishlistResponse,
   BulkOperationResponse,
   ImportItem,
   ImportResponse,
   ExportFormat,
-} from '@/types/wishlist';
+} from '@/types';
 
 import client from './api';
-
-// ============================================================================
-// Response Interfaces (for basic operations)
-// ============================================================================
-
-export interface WishlistResponse {
-  entries: WishlistEntry[];
-  total:   number;
-}
-
-export interface AddWishlistResponse {
-  success: boolean;
-  message: string;
-  entry:   WishlistEntry;
-}
-
-export interface UpdateWishlistResponse {
-  success: boolean;
-  message: string;
-  entry:   WishlistEntry;
-}
-
-export interface DeleteWishlistResponse {
-  success: boolean;
-  message: string;
-}
-
-// ============================================================================
-// Basic Operations
-// ============================================================================
 
 export async function getWishlist(): Promise<WishlistResponse> {
   const response = await client.get<WishlistResponse>('/wishlist');
@@ -60,12 +33,7 @@ export async function deleteFromWishlist(id: string): Promise<DeleteWishlistResp
   return response.data;
 }
 
-// ============================================================================
-// Paginated Operations with Filters
-// ============================================================================
-
 export async function getWishlistPaginated(filters: WishlistFilters): Promise<PaginatedWishlistResponse> {
-  // Build query params, filtering out undefined values
   const params: Record<string, string | number> = {};
 
   if (filters.source) {
@@ -101,10 +69,6 @@ export async function getWishlistPaginated(filters: WishlistFilters): Promise<Pa
   return response.data;
 }
 
-// ============================================================================
-// Update Operations
-// ============================================================================
-
 export async function updateWishlistItem(
   id: string,
   data: UpdateWishlistRequest
@@ -113,10 +77,6 @@ export async function updateWishlistItem(
 
   return response.data;
 }
-
-// ============================================================================
-// Bulk Operations
-// ============================================================================
 
 export async function bulkDeleteWishlist(ids: string[]): Promise<BulkOperationResponse> {
   const response = await client.delete<BulkOperationResponse>('/wishlist/bulk', { data: { ids } });
@@ -129,10 +89,6 @@ export async function bulkRequeueWishlist(ids: string[]): Promise<BulkOperationR
 
   return response.data;
 }
-
-// ============================================================================
-// Export/Import
-// ============================================================================
 
 export async function exportWishlist(format: ExportFormat, ids?: string[]): Promise<Blob> {
   const params: Record<string, string> = { format };

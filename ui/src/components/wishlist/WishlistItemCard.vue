@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { WishlistEntryWithStatus, DownloadStatus } from '@/types/wishlist';
+import type { WishlistEntryWithStatus, WishlistDownloadStatus } from '@/types';
 
 import { computed, ref, watch } from 'vue';
+import { getDefaultCoverUrl } from '@/utils/formatters';
 
 import Button from 'primevue/button';
 import Checkbox from 'primevue/checkbox';
 import Tag from 'primevue/tag';
-import { getDefaultCoverUrl } from '@/utils/formatters';
 
 interface Props {
   item:       WishlistEntryWithStatus;
@@ -26,7 +26,6 @@ const emit = defineEmits<{
 
 const cardRef = ref<HTMLElement | null>(null);
 
-// Scroll focused card into view
 watch(
   () => props.focused,
   (isFocused) => {
@@ -53,33 +52,33 @@ const sourceTag = computed((): { label: string; icon: string; severity: 'info' |
 });
 
 const downloadStatusDisplay = computed(() => {
-  const statusMap: Record<DownloadStatus, { label: string; icon: string; severity: 'success' | 'info' | 'warn' | 'danger' | 'secondary' }> = {
+  const statusMap: Record<WishlistDownloadStatus, { label: string; icon: string; severity: 'success' | 'info' | 'warn' | 'danger' | 'secondary' }> = {
     none:              {
-      label: 'Pending', icon: 'pi-clock', severity: 'secondary' 
+      label: 'Pending', icon: 'pi-clock', severity: 'secondary'
     },
     pending:           {
-      label: 'Queued', icon: 'pi-hourglass', severity: 'info' 
+      label: 'Queued', icon: 'pi-hourglass', severity: 'info'
     },
     searching:         {
-      label: 'Searching', icon: 'pi-spin pi-spinner', severity: 'info' 
+      label: 'Searching', icon: 'pi-spin pi-spinner', severity: 'info'
     },
     pending_selection: {
-      label: 'Select', icon: 'pi-question-circle', severity: 'warn' 
+      label: 'Select', icon: 'pi-question-circle', severity: 'warn'
     },
     deferred:          {
-      label: 'Deferred', icon: 'pi-pause', severity: 'secondary' 
+      label: 'Deferred', icon: 'pi-pause', severity: 'secondary'
     },
     queued:            {
-      label: 'Downloading', icon: 'pi-spin pi-spinner', severity: 'info' 
+      label: 'Downloading', icon: 'pi-spin pi-spinner', severity: 'info'
     },
     downloading:       {
-      label: 'Downloading', icon: 'pi-spin pi-spinner', severity: 'info' 
+      label: 'Downloading', icon: 'pi-spin pi-spinner', severity: 'info'
     },
     completed:         {
-      label: 'Downloaded', icon: 'pi-check-circle', severity: 'success' 
+      label: 'Downloaded', icon: 'pi-check-circle', severity: 'success'
     },
     failed:            {
-      label: 'Failed', icon: 'pi-times-circle', severity: 'danger' 
+      label: 'Failed', icon: 'pi-times-circle', severity: 'danger'
     },
   };
 
@@ -226,7 +225,7 @@ function handleCardClick(event: MouseEvent) {
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .wishlist-card {
   position: relative;
   display: flex;
@@ -237,154 +236,154 @@ function handleCardClick(event: MouseEvent) {
   overflow: hidden;
   transition: all 0.3s ease;
   cursor: pointer;
-}
 
-.wishlist-card:hover {
-  border-color: rgba(43, 43, 238, 0.5);
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5),
-              0 0 15px rgba(43, 43, 238, 0.1);
-}
+  &:hover {
+    border-color: rgba(43, 43, 238, 0.5);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5),
+                0 0 15px rgba(43, 43, 238, 0.1);
 
-.wishlist-card--focused {
-  border-color: var(--primary-500);
-  box-shadow: 0 0 0 2px var(--primary-500);
-}
+    .wishlist-card__image {
+      transform: scale(1.05);
+      opacity: 1;
+    }
 
-.wishlist-card--selected {
-  border-color: var(--primary-400);
-  background-color: rgba(43, 43, 238, 0.05);
-}
+    .wishlist-card__overlay {
+      opacity: 1;
+    }
+  }
 
-.wishlist-card--selected .wishlist-card__overlay {
-  opacity: 1;
-}
+  &--focused {
+    border-color: var(--primary-500);
+    box-shadow: 0 0 0 2px var(--primary-500);
+  }
 
-/* Cover Section */
-.wishlist-card__cover {
-  position: relative;
-  aspect-ratio: 1 / 1;
-  width: 100%;
-  overflow: hidden;
-  background-color: var(--surface-900);
-}
+  &--selected {
+    border-color: var(--primary-400);
+    background-color: rgba(43, 43, 238, 0.05);
 
-.wishlist-card__image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0.9;
-  transition: transform 0.5s ease, opacity 0.3s ease;
-}
+    .wishlist-card__overlay {
+      opacity: 1;
+    }
+  }
 
-.wishlist-card:hover .wishlist-card__image {
-  transform: scale(1.05);
-  opacity: 1;
-}
+  /* Cover Section */
+  &__cover {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    width: 100%;
+    overflow: hidden;
+    background-color: var(--surface-900);
+  }
 
-/* Hover Overlay */
-.wishlist-card__overlay {
-  position: absolute;
-  inset: 0;
-  background: var(--r-overlay-light);
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
-  padding: 0.5rem;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
+  &__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.9;
+    transition: transform 0.5s ease, opacity 0.3s ease;
+  }
 
-.wishlist-card:hover .wishlist-card__overlay {
-  opacity: 1;
-}
+  /* Hover Overlay */
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    background: var(--r-overlay-light);
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 0.5rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
 
-.wishlist-card__select {
-  background: var(--surface-card);
-  border-radius: 0.375rem;
-  padding: 0.25rem;
-}
+  &__select {
+    background: var(--surface-card);
+    border-radius: 0.375rem;
+    padding: 0.25rem;
+  }
 
-/* Status Badge */
-.wishlist-card__status {
-  position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
+  /* Status Badge */
+  &__status {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+  }
+
+  /* Content Section */
+  &__content {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    gap: 0.75rem;
+    flex: 1;
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+  }
+
+  &__title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--r-text-primary);
+    line-height: 1.25;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin: 0;
+  }
+
+  &__artist {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--r-text-secondary);
+    margin: 0;
+  }
+
+  /* Tags */
+  &__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  /* Error message */
+  &__error {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 0.375rem;
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--red-400);
+    font-size: 0.75rem;
+
+    i {
+      flex-shrink: 0;
+    }
+
+    span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  /* Actions */
+  &__actions {
+    display: flex;
+    gap: 0.25rem;
+    margin-top: auto;
+    padding-top: 0.5rem;
+    justify-content: flex-end;
+  }
 }
 
 :deep(.wishlist-card__status-tag) {
   font-size: 0.625rem;
   padding: 0.25rem 0.5rem;
-}
-
-/* Content Section */
-.wishlist-card__content {
-  display: flex;
-  flex-direction: column;
-  padding: 1rem;
-  gap: 0.75rem;
-  flex: 1;
-}
-
-.wishlist-card__info {
-  display: flex;
-  flex-direction: column;
-  gap: 0.125rem;
-}
-
-.wishlist-card__title {
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--r-text-primary);
-  line-height: 1.25;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  margin: 0;
-}
-
-.wishlist-card__artist {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--r-text-secondary);
-  margin: 0;
-}
-
-/* Tags */
-.wishlist-card__tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-/* Error message */
-.wishlist-card__error {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem;
-  border-radius: 0.375rem;
-  background: rgba(239, 68, 68, 0.1);
-  color: var(--red-400);
-  font-size: 0.75rem;
-}
-
-.wishlist-card__error i {
-  flex-shrink: 0;
-}
-
-.wishlist-card__error span {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* Actions */
-.wishlist-card__actions {
-  display: flex;
-  gap: 0.25rem;
-  margin-top: auto;
-  padding-top: 0.5rem;
-  justify-content: flex-end;
 }
 
 :deep(.wishlist-card__action-btn) {

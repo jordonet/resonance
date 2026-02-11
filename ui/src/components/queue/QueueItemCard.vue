@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { QueueItem } from '@/types/queue';
+import type { QueueItem } from '@/types';
 
 import { computed, ref, watch } from 'vue';
+import { getDefaultCoverUrl } from '@/utils/formatters';
 
 import Button from 'primevue/button';
 import Tag from 'primevue/tag';
-import { getDefaultCoverUrl } from '@/utils/formatters';
 
 interface Props {
   item:        QueueItem;
@@ -26,7 +26,6 @@ const emit = defineEmits<{
 
 const cardRef = ref<HTMLElement | null>(null);
 
-// Scroll focused card into view
 watch(
   () => props.focused,
   (isFocused) => {
@@ -197,7 +196,7 @@ const handleCardClick = (event: MouseEvent) => {
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .queue-card {
   position: relative;
   display: flex;
@@ -207,142 +206,142 @@ const handleCardClick = (event: MouseEvent) => {
   background-color: var(--p-card-background);
   overflow: hidden;
   transition: all 0.3s ease;
-}
 
-.queue-card:hover {
-  border-color: rgba(43, 43, 238, 0.5);
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5),
-              0 0 15px rgba(43, 43, 238, 0.1);
-}
+  &:hover {
+    border-color: rgba(43, 43, 238, 0.5);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5),
+                0 0 15px rgba(43, 43, 238, 0.1);
 
-.queue-card--focused {
-  border-color: var(--primary-500);
-  box-shadow: 0 0 0 2px var(--primary-500);
-}
+    .queue-card__image {
+      transform: scale(1.1);
+      opacity: 1;
+    }
 
-.queue-card--focused .queue-card__overlay {
-  opacity: 1;
-}
+    .queue-card__overlay {
+      opacity: 1;
+    }
+  }
 
-/* Cover Section */
-.queue-card__cover {
-  position: relative;
-  aspect-ratio: 1 / 1;
-  width: 100%;
-  overflow: hidden;
-  background-color: var(--surface-900);
-}
+  &--focused {
+    border-color: var(--primary-500);
+    box-shadow: 0 0 0 2px var(--primary-500);
 
-.queue-card__image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0.9;
-  transition: transform 0.5s ease, opacity 0.3s ease;
-}
+    .queue-card__overlay {
+      opacity: 1;
+    }
+  }
 
-.queue-card:hover .queue-card__image {
-  transform: scale(1.1);
-  opacity: 1;
-}
+  /* Cover Section */
+  &__cover {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    width: 100%;
+    overflow: hidden;
+    background-color: var(--surface-900);
+  }
 
-/* Hover Overlay */
-.queue-card__overlay {
-  position: absolute;
-  inset: 0;
-  background: var(--r-overlay-medium);
-  backdrop-filter: blur(2px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
+  &__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.9;
+    transition: transform 0.5s ease, opacity 0.3s ease;
+  }
 
-.queue-card:hover .queue-card__overlay {
-  opacity: 1;
-}
+  /* Hover Overlay */
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    background: var(--r-overlay-medium);
+    backdrop-filter: blur(2px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
 
-.queue-card__play-btn {
-  width: 3rem;
-  height: 3rem;
-  border-radius: 50%;
-  background: var(--r-overlay-medium);
-  color: var(--p-button-primary-color);
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-}
+  &__play-btn {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    background: var(--r-overlay-medium);
+    color: var(--p-button-primary-color);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
 
-.queue-card__play-btn i {
-  font-size: 1.5rem;
-}
+    i {
+      font-size: 1.5rem;
+    }
+  }
 
-/* Score Badge */
-.queue-card__score {
-  position: absolute;
-  top: 0.25rem;
-  right: 0.25rem;
-  padding: 0.25rem 0.25rem;
-  border-radius: 0.375rem;
-  font-size: 0.75rem;
-  font-weight: 700;
-  background: var(--r-overlay-medium);
-  color: var(--p-button-primary-color);
-  backdrop-filter: blur(8px);
-  border: 1px solid var(--r-border-default);
-}
+  /* Score Badge */
+  &__score {
+    position: absolute;
+    top: 0.25rem;
+    right: 0.25rem;
+    padding: 0.25rem 0.25rem;
+    border-radius: 0.375rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    background: var(--r-overlay-medium);
+    color: var(--p-button-primary-color);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--r-border-default);
+  }
 
-/* Content Section */
-.queue-card__content {
-  display: flex;
-  flex-direction: column;
-  padding: 1rem;
-  gap: 0.75rem;
-  flex: 1;
-}
+  /* Content Section */
+  &__content {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    gap: 0.75rem;
+    flex: 1;
+  }
 
-.queue-card__info {
-  display: flex;
-  flex-direction: column;
-  gap: 0.125rem;
-}
+  &__info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+  }
 
-.queue-card__title {
-  font-size: 1.125rem;
-  font-weight: 700;
-  color: var(--r-text-primary);
-  line-height: 1.25;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  margin: 0;
-}
+  &__title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--r-text-primary);
+    line-height: 1.25;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin: 0;
+  }
 
-.queue-card__artist {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--r-text-secondary);
-  margin: 0;
-}
+  &__artist {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--r-text-secondary);
+    margin: 0;
+  }
 
-/* Tags */
-.queue-card__tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 0.25rem;
-}
+  /* Tags */
+  &__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.25rem;
+  }
 
-/* Actions */
-.queue-card__actions {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: auto;
-  padding-top: 0.75rem;
+  /* Actions */
+  &__actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: auto;
+    padding-top: 0.75rem;
+  }
 }
 
 :deep(.queue-card__approve-btn) {

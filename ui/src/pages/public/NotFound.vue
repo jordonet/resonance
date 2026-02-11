@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
+
 import Button from 'primevue/button';
 
 const router = useRouter();
@@ -56,7 +57,7 @@ function goToDashboard() {
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .not-found-page {
   display: flex;
   align-items: center;

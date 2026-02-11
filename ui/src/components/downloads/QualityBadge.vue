@@ -49,20 +49,20 @@ const bitrateLabel = computed(() => {
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .quality-badge {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-}
 
-.quality-badge__format {
-  text-transform: uppercase;
-  font-weight: 600;
-}
+  &__format {
+    text-transform: uppercase;
+    font-weight: 600;
+  }
 
-.quality-badge__bitrate {
-  font-size: 0.75rem;
-  color: var(--surface-400);
+  &__bitrate {
+    font-size: 0.75rem;
+    color: var(--surface-400);
+  }
 }
 </style>

@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import type { ThemeMode } from '@/types';
+
 import { computed } from 'vue';
-import { useThemeStore, type ThemeMode } from '@/stores/theme';
+import { useThemeStore } from '@/stores/theme';
 
 import Button from 'primevue/button';
 
@@ -48,7 +50,7 @@ const tooltip = computed(() => {
   />
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .theme-toggle {
   justify-content: flex-start;
   width: auto;
@@ -56,11 +58,11 @@ const tooltip = computed(() => {
   border-radius: 0.5rem;
   color: var(--surface-300);
   transition: background-color 0.2s ease, color 0.2s ease;
-}
 
-.theme-toggle:hover {
-  background-color: var(--r-hover-bg);
-  color: var(--r-text-primary);
+  &:hover {
+    background-color: var(--r-hover-bg);
+    color: var(--r-text-primary);
+  }
 }
 
 :deep(.p-button-label) {

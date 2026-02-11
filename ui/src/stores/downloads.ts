@@ -67,7 +67,6 @@ export const useDownloadsStore = defineStore('downloads', () => {
     error.value = null;
 
     try {
-      // Use separate offset for completed list when appending
       const requestFilters = append ? { ...filters.value, offset: completedOffset.value } : filters.value;
 
       const response = await downloadsApi.getCompleted(requestFilters);
@@ -91,7 +90,6 @@ export const useDownloadsStore = defineStore('downloads', () => {
     error.value = null;
 
     try {
-      // Use separate offset for failed list when appending
       const requestFilters = append ? { ...filters.value, offset: failedOffset.value } : filters.value;
 
       const response = await downloadsApi.getFailed(requestFilters);
@@ -129,13 +127,11 @@ export const useDownloadsStore = defineStore('downloads', () => {
     try {
       const result = await downloadsApi.retry({ ids });
 
-      // Remove retried items from the failed list
       failedDownloads.value = failedDownloads.value.filter((download) => !ids.includes(download.id));
       failedTotal.value = Math.max(0, failedTotal.value - result.success);
 
       showSuccess('Downloads retried', `${ result.success } download(s) queued for retry`);
 
-      // Refresh stats
       await fetchStats();
     } catch(e) {
       error.value = e instanceof Error ? e.message : 'Failed to retry downloads';
@@ -165,7 +161,6 @@ export const useDownloadsStore = defineStore('downloads', () => {
 
       showSuccess('Downloads deleted', `${ result.success } download(s) removed`);
 
-      // Refresh stats
       await fetchStats();
     } catch(e) {
       error.value = e instanceof Error ? e.message : 'Failed to delete downloads';

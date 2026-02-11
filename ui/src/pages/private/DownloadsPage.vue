@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { ActiveDownload } from '@/types';
-import type { DownloadsTab } from '@/types/tabs';
+import type { DownloadsTab } from '@/types';
 
 import { onMounted } from 'vue';
 
 import { useTabSync } from '@/composables/useTabSync';
-import { DOWNLOADS_TABS } from '@/types/tabs';
+import { DOWNLOADS_TABS } from '@/constants/settings';
 import { useDownloads } from '@/composables/useDownloads';
 import { useDownloadsSocket } from '@/composables/useDownloadsSocket';
 import { useJobs } from '@/composables/useJobs';
@@ -203,34 +203,43 @@ onMounted(() => {
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .downloads-page {
   max-width: 1400px;
   margin: 0 auto;
-}
 
-.downloads-page__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 2rem;
-}
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
 
-.downloads-page__title {
-  font-size: 2.25rem;
-  font-weight: 700;
-  color: var(--r-text-primary);
-  margin: 0;
-}
+    @media (max-width: 768px) {
+      flex-direction: column;
+      gap: 1rem;
+    }
+  }
 
-.downloads-page__subtitle {
-  font-size: 1rem;
-  color: var(--surface-300);
-  margin: 0.5rem 0 0 0;
-}
+  &__title {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: var(--r-text-primary);
+    margin: 0;
 
-.downloads-page__tabs {
-  margin-top: 2rem;
+    @media (max-width: 768px) {
+      font-size: 1.75rem;
+    }
+  }
+
+  &__subtitle {
+    font-size: 1rem;
+    color: var(--surface-300);
+    margin: 0.5rem 0 0 0;
+  }
+
+  &__tabs {
+    margin-top: 2rem;
+  }
 }
 
 .badge {
@@ -243,31 +252,20 @@ onMounted(() => {
   border-radius: 0.75rem;
   font-size: 0.75rem;
   font-weight: 600;
-}
 
-.badge--primary {
-  background: var(--primary-500);
-  color: var(--r-text-primary);
-}
-
-.badge--success {
-  background: var(--green-500);
-  color: var(--r-text-primary);
-}
-
-.badge--danger {
-  background: var(--red-500);
-  color: var(--r-text-primary);
-}
-
-@media (max-width: 768px) {
-  .downloads-page__header {
-    flex-direction: column;
-    gap: 1rem;
+  &--primary {
+    background: var(--primary-500);
+    color: var(--r-text-primary);
   }
 
-  .downloads-page__title {
-    font-size: 1.75rem;
+  &--success {
+    background: var(--green-500);
+    color: var(--r-text-primary);
+  }
+
+  &--danger {
+    background: var(--red-500);
+    color: var(--r-text-primary);
   }
 }
 </style>
