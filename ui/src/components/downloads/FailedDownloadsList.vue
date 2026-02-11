@@ -202,7 +202,7 @@ const handleDelete = () => {
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .failed-downloads-list {
   width: 100%;
 }
@@ -212,47 +212,47 @@ const handleDelete = () => {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-}
 
-.failed-mobile__card {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  padding: 0.75rem;
-  border-radius: 0.5rem;
-  border: 1px solid var(--r-border-default);
-  background: var(--p-card-background);
-}
+  &__card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--r-border-default);
+    background: var(--p-card-background);
+  }
 
-.failed-mobile__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 0.5rem;
-}
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
 
-.failed-mobile__info {
-  flex: 1;
-  min-width: 0;
-}
+  &__info {
+    flex: 1;
+    min-width: 0;
+  }
 
-.failed-mobile__error {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-}
+  &__error {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
 
-.failed-mobile__meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-}
+  &__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
 
-.failed-mobile__actions {
-  display: flex;
-  gap: 0.5rem;
-  justify-content: flex-end;
+  &__actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+  }
 }
 </style>

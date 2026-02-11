@@ -4,7 +4,7 @@ import type { SearchResultsResponse, ScoredSearchResponse, DirectoryGroup, Quali
 import {
   ref, computed, watch, onMounted, onUnmounted
 } from 'vue';
-import { formatFileSize, formatSpeed } from '@/utils/formatters';
+import { formatBytes, formatSpeed } from '@/utils/formatters';
 import { getSearchResults } from '@/services/downloads';
 import { useBreakpoint } from '@/composables/useBreakpoint';
 
@@ -310,7 +310,7 @@ function handleAutoSelect() {
             <span v-if="result.response.uploadSpeed && result.response.uploadSpeed > 0" class="text-sm">{{ formatSpeed(result.response.uploadSpeed) }}</span>
             <span v-if="result.expectedTrackCount" class="text-sm">{{ result.musicFileCount }}/{{ result.expectedTrackCount }}</span>
             <span v-else class="text-sm">{{ result.musicFileCount }} files</span>
-            <span class="text-sm">{{ formatFileSize(result.totalSize) }}</span>
+            <span class="text-sm">{{ formatBytes(result.totalSize) }}</span>
           </div>
           <div v-if="result.scoreBreakdown" class="results-mobile__breakdown">
             <button class="breakdown-toggle" @click="expandedRows[result.response.username] = !expandedRows[result.response.username]">
@@ -386,7 +386,7 @@ function handleAutoSelect() {
 
         <Column header="Size" sortable sortField="totalSize">
           <template #body="{ data }">
-            {{ formatFileSize(data.totalSize) }}
+            {{ formatBytes(data.totalSize) }}
           </template>
         </Column>
 
@@ -476,35 +476,35 @@ function handleAutoSelect() {
   </Dialog>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   width: 100%;
-}
 
-.modal-header__title h3 {
-  margin: 0;
-  font-size: 1.25rem;
-  font-weight: 600;
-}
+  &__title h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
 
-.modal-header__subtitle {
-  margin: 0.25rem 0 0;
-  font-size: 0.875rem;
-  color: var(--surface-400);
-}
+  &__subtitle {
+    margin: 0.25rem 0 0;
+    font-size: 0.875rem;
+    color: var(--surface-400);
+  }
 
-.modal-header__countdown {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.875rem;
-  color: var(--primary-300);
-  padding: 0.375rem 0.75rem;
-  background: var(--primary-900);
-  border-radius: 4px;
+  &__countdown {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--primary-300);
+    padding: 0.375rem 0.75rem;
+    background: var(--primary-900);
+    border-radius: 4px;
+  }
 }
 
 .search-results-modal {
@@ -517,10 +517,10 @@ function handleAutoSelect() {
   margin-bottom: 1rem;
   padding-bottom: 1rem;
   border-bottom: 1px solid var(--surface-700);
-}
 
-.search-query__input {
-  flex: 1;
+  &__input {
+    flex: 1;
+  }
 }
 
 .loading-state,
@@ -575,39 +575,45 @@ function handleAutoSelect() {
   gap: 0.75rem;
   max-height: 500px;
   overflow-y: auto;
-}
 
-.results-mobile__card {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  padding: 0.75rem;
-  border-radius: 0.5rem;
-  border: 1px solid var(--surface-700);
-  background: var(--surface-800);
-}
+  &__card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--surface-700);
+    background: var(--surface-800);
+  }
 
-.results-mobile__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 
-.results-mobile__meta {
-  display: flex;
-  gap: 1rem;
-  color: var(--surface-400);
-}
+  &__meta {
+    display: flex;
+    gap: 1rem;
+    color: var(--surface-400);
+  }
 
-.results-mobile__breakdown {
-  border-top: 1px solid var(--surface-700);
-  padding-top: 0.5rem;
-}
+  &__breakdown {
+    border-top: 1px solid var(--surface-700);
+    padding-top: 0.5rem;
 
-.results-mobile__breakdown .score-breakdown {
-  margin-bottom: 0;
-  padding-bottom: 0;
-  border-bottom: none;
+    .score-breakdown {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+  }
 }
 
 .breakdown-toggle {
@@ -621,16 +627,10 @@ function handleAutoSelect() {
   cursor: pointer;
   padding: 0;
   margin-bottom: 0.5rem;
-}
 
-.breakdown-toggle:hover {
-  color: var(--surface-300);
-}
-
-.results-mobile__actions {
-  display: flex;
-  gap: 0.5rem;
-  justify-content: flex-end;
+  &:hover {
+    color: var(--surface-300);
+  }
 }
 
 /* Score styles */
@@ -654,18 +654,18 @@ function handleAutoSelect() {
   padding-bottom: 0.75rem;
   border-bottom: 1px solid var(--surface-700);
   font-size: 0.8125rem;
-}
 
-.score-breakdown__label {
-  color: var(--surface-400);
-}
+  &__label {
+    color: var(--surface-400);
+  }
 
-.score-breakdown__item {
-  color: var(--surface-300);
-  padding: 0.125rem 0.5rem;
-  background: var(--surface-800);
-  border-radius: 4px;
-  border: 1px solid var(--surface-700);
+  &__item {
+    color: var(--surface-300);
+    padding: 0.125rem 0.5rem;
+    background: var(--surface-800);
+    border-radius: 4px;
+    border: 1px solid var(--surface-700);
+  }
 }
 
 /* Completeness indicators */
@@ -699,8 +699,10 @@ function handleAutoSelect() {
 }
 
 @media (max-width: 768px) {
-  .results-mobile__card {
-    padding: 0.25rem;
+  .results-mobile {
+    &__card {
+      padding: 0.25rem;
+    }
   }
 
   .score-breakdown {

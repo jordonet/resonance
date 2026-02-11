@@ -105,9 +105,21 @@ const { isMobile } = useBreakpoint(900);
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .unorganized-tasks {
   width: 100%;
+
+  &__load-more {
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  &__count {
+    color: var(--surface-300);
+    font-size: 0.75rem;
+  }
 }
 
 /* Mobile card view */
@@ -115,39 +127,27 @@ const { isMobile } = useBreakpoint(900);
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-}
 
-.unorganized-mobile__card {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  padding: 0.75rem;
-  border-radius: 0.5rem;
-  border: 1px solid var(--r-border-default);
-  background: var(--p-card-background);
-}
+  &__card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--r-border-default);
+    background: var(--p-card-background);
+  }
 
-.unorganized-mobile__info {
-  flex: 1;
-  min-width: 0;
-}
+  &__info {
+    flex: 1;
+    min-width: 0;
+  }
 
-.unorganized-mobile__meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-}
-
-.unorganized-tasks__load-more {
-  margin-top: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.unorganized-tasks__count {
-  color: var(--surface-300);
-  font-size: 0.75rem;
+  &__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
 }
 </style>
 

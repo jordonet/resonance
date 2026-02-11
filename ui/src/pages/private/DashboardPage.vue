@@ -140,55 +140,49 @@ onMounted(() => {
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .dashboard {
   max-width: 1600px;
   margin: 0 auto;
-}
 
-.dashboard__header {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 2rem;
-}
-
-.dashboard__stats-grid {
-  display: grid;
-  grid-template-columns: repeat(1, minmax(0, 1fr));
-  gap: 1rem;
-  margin-bottom: 2rem;
-}
-
-@media (min-width: 768px) {
-  .dashboard__stats-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  &__header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 2rem;
   }
-}
 
-@media (min-width: 1280px) {
-  .dashboard__stats-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+  &__stats-grid {
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    @media (min-width: 1280px) {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
   }
-}
 
-.dashboard__content-row {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.5rem;
-}
+  &__content-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
 
-@media (min-width: 1024px) {
-  .dashboard__content-row {
-    grid-template-columns: 1.5fr 1fr;
+    @media (min-width: 1024px) {
+      grid-template-columns: 1.5fr 1fr;
+    }
   }
-}
 
-.dashboard__chart-section,
-.dashboard__activity-section {
-  min-height: 400px;
+  &__chart-section,
+  &__activity-section {
+    min-height: 400px;
+  }
 }
 
 /* Button styling */

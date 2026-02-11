@@ -50,7 +50,7 @@ defineProps<Props>();
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .download-stats {
   margin-bottom: 2rem;
 }

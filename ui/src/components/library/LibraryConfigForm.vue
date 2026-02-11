@@ -207,66 +207,68 @@ function handleSave() {
   </div>
 </template>
 
-<style scoped>
-.library-config__grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1rem;
-}
+<style lang="scss" scoped>
+.library-config {
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
 
-@media (max-width: 768px) {
-  .library-config__grid {
-    grid-template-columns: 1fr;
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__label {
+    color: var(--surface-200);
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  &__help {
+    color: var(--surface-400);
+    font-size: 0.75rem;
+  }
+
+  &__details {
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+    background: var(--surface-glass, rgba(21, 21, 37, 0.7));
+  }
+
+  &__summary {
+    cursor: pointer;
+    color: var(--r-text-primary);
+    font-weight: 700;
+  }
+
+  &__details-body {
+    margin-top: 1rem;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  &__actions {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: flex-end;
   }
 }
 
-.library-config__field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.library-config__label {
-  color: var(--surface-200);
-  font-size: 0.875rem;
-  font-weight: 600;
-}
-
-.library-config__help {
-  color: var(--surface-400);
-  font-size: 0.75rem;
-}
-
-.library-config__details {
-  margin-top: 1rem;
-  padding: 1rem;
-  border-radius: 0.75rem;
-  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
-  background: var(--surface-glass, rgba(21, 21, 37, 0.7));
-}
-
-.library-config__summary {
-  cursor: pointer;
-  color: var(--r-text-primary);
-  font-weight: 700;
-}
-
-.library-config__details-body {
-  margin-top: 1rem;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1rem;
-}
-
 @media (max-width: 768px) {
-  .library-config__details-body {
-    grid-template-columns: 1fr;
-  }
-}
+  .library-config {
+    &__grid {
+      grid-template-columns: 1fr;
+    }
 
-.library-config__actions {
-  margin-top: 1.5rem;
-  display: flex;
-  justify-content: flex-end;
+    &__details-body {
+      grid-template-columns: 1fr;
+    }
+  }
 }
 </style>

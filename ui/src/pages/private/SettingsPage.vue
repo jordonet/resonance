@@ -196,51 +196,51 @@ function handleUIPreferencesSave(prefs: Partial<UIPreferences>) {
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .settings-page {
   max-width: 1200px;
   margin: 0 auto;
-}
 
-.settings-page__header {
-  margin-bottom: 2rem;
-}
+  &__header {
+    margin-bottom: 2rem;
+  }
 
-.settings-page__title {
-  font-size: 2.25rem;
-  font-weight: 700;
-  color: var(--r-text-primary);
-  margin: 0;
-}
+  &__title {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: var(--r-text-primary);
+    margin: 0;
+  }
 
-.settings-page__subtitle {
-  font-size: 1rem;
-  color: var(--surface-300);
-  margin: 0.5rem 0 0 0;
-}
+  &__subtitle {
+    font-size: 1rem;
+    color: var(--surface-300);
+    margin: 0.5rem 0 0 0;
+  }
 
-.settings-page__content {
-  background: var(--surface-glass, rgba(21, 21, 37, 0.7));
-  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
-  border-radius: 1rem;
-  overflow: hidden;
-}
+  &__content {
+    background: var(--surface-glass, rgba(21, 21, 37, 0.7));
+    border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+    border-radius: 1rem;
+    overflow: hidden;
+  }
 
-.settings-page__panel {
-  padding: 1.5rem;
-}
+  &__panel {
+    padding: 1.5rem;
+  }
 
-.settings-page__section-title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--r-text-primary);
-  margin: 0 0 0.5rem 0;
-}
+  &__section-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--r-text-primary);
+    margin: 0 0 0.5rem 0;
+  }
 
-.settings-page__section-desc {
-  font-size: 0.875rem;
-  color: var(--surface-300);
-  margin: 0 0 1.5rem 0;
+  &__section-desc {
+    font-size: 0.875rem;
+    color: var(--surface-300);
+    margin: 0 0 1.5rem 0;
+  }
 }
 
 :deep(.p-tablist) {

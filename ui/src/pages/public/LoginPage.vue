@@ -197,7 +197,7 @@ async function handleApiKeySubmit() {
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .logo-container {
   background: linear-gradient(135deg, var(--primary-500, #2b2bee) 0%, #6366f1 100%);
   border-radius: 0.75rem;
