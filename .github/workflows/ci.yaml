@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - master
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          run_install: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: pnpm
+          cache-dependency-path: '**/pnpm-lock.yaml'
+
+      - name: Install server dependencies
+        run: pnpm --filter server install --frozen-lockfile
+
+      - name: Install ui dependencies
+        run: pnpm --filter ui install --frozen-lockfile
+
+      - name: Build server
+        run: pnpm --filter server run build
+
+      - name: Build ui
+        run: pnpm --filter ui run build
+
+      - name: Lint server
+        run: pnpm --filter server run lint
+
+      - name: Lint ui
+        run: pnpm --filter ui run lint
+
+      - name: Audit dependencies
+        run: pnpm audit --audit-level=high

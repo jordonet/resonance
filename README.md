@@ -1,6 +1,8 @@
 # DeepCrate
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![CI](https://github.com/jordojordo/deepcrate/actions/workflows/ci.yaml/badge.svg)](https://github.com/jordojordo/deepcrate/actions/workflows/ci.yaml)
+[![Test](https://github.com/jordojordo/deepcrate/actions/workflows/test.yaml/badge.svg?event=schedule)](https://github.com/jordojordo/deepcrate/actions/workflows/test.yaml)
 [![Docker](https://img.shields.io/badge/docker-ghcr.io%2Fjordojordo%2Fdeepcrate-blue)](https://ghcr.io/jordojordo/deepcrate)
 [![AI Assisted](https://img.shields.io/badge/AI-Claude_Code-D97757?logo=claude&logoColor=fff)](https://claude.ai/code)
 
